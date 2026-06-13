@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptForge — AI Prompt Optimizer</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--border:#1e1e2e;--text:#e0e0f0;
+  --muted:#6b6b80;--accent:#7c3aed;--accent2:#a78bfa;--green:#10b981;
+  --red:#ef4444;--orange:#f59e0b;--pink:#ec4899;--card-bg:#161622;
+  --gradient:linear-gradient(135deg,var(--accent),var(--pink));
+}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.logo{font-size:1.4rem;font-weight:800}.logo span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.badge{background:var(--gradient);padding:0.2rem 0.7rem;border-radius:1rem;font-size:0.75rem;font-weight:600;color:#fff}
+.btn{padding:0.55rem 1.2rem;border-radius:0.5rem;font-weight:600;cursor:pointer;border:none;font-size:0.875rem;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--accent2)}
+.btn-pro{background:var(--gradient);color:#fff;font-size:0.9rem;padding:0.7rem 1.5rem}.btn-pro:hover{opacity:0.9;transform:translateY(-1px)}
+main{max-width:1200px;margin:0 auto;padding:2rem}
+.hero{text-align:center;padding:3rem 1rem 2rem}
+.hero-badge{display:inline-block;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);padding:0.35rem 1rem;border-radius:2rem;font-size:0.85rem;margin-bottom:1.5rem;color:var(--accent2)}
+.hero h1{font-size:3rem;line-height:1.15;margin-bottom:1rem;font-weight:800}
+.hero h1 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.15rem;color:var(--muted);max-width:650px;margin:0 auto 2rem}
+.stats{display:flex;justify-content:center;gap:2.5rem;margin:1.5rem 0;flex-wrap:wrap}
+.stat{text-align:center}.stat-num{font-size:1.7rem;font-weight:700;color:var(--accent2)}.stat-label{font-size:0.78rem;color:var(--muted)}
+.tabs-nav{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.5rem}
+.tab-btn{padding:0.75rem 1.5rem;background:none;border:none;color:var(--muted);cursor:pointer;font-weight:600;font-size:0.9rem;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:0.75rem;padding:1.5rem}
+.input-group{margin-bottom:1rem}
+.input-group label{display:block;font-size:0.8rem;font-weight:600;margin-bottom:0.35rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+textarea,input[type="text"],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:0.5rem;padding:0.75rem;color:var(--text);font-family:"JetBrains Mono","Fira Code",monospace;font-size:0.875rem;resize:vertical;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--accent)}
+textarea{min-height:120px}
+select{appearance:none;cursor:pointer}
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.6rem;margin:1rem 0}
+.score-item{background:var(--bg);border:1px solid var(--border);border-radius:0.5rem;padding:0.65rem;text-align:center}
+.score-val{font-size:1.4rem;font-weight:700}.score-val.high{color:var(--green)}.score-val.mid{color:var(--orange)}.score-val.low{color:var(--red)}
+.score-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;margin-top:0.15rem}
+.overall-score{text-align:center;margin:1rem 0}
+.score-circle{width:90px;height:90px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;border:3px solid}
+.insights{background:var(--bg);border:1px solid var(--border);border-radius:0.5rem;padding:1rem;margin:1rem 0}
+.insight-item{padding:0.45rem 0;border-bottom:1px solid var(--border);display:flex;gap:0.5rem;font-size:0.85rem}
+.insight-item:last-child{border-bottom:none}
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.8rem;margin:1rem 0}
+.template-card{background:var(--card-bg);border:1px solid var(--border);border-radius:0.75rem;padding:1rem;cursor:pointer;transition:all .2s}
+.template-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.template-cat{font-size:0.65rem;color:var(--accent2);text-transform:uppercase;font-weight:600;margin-bottom:0.2rem}
+.template-title{font-weight:600;margin-bottom:0.2rem}
+.template-preview{font-size:0.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.template-stats{display:flex;gap:1rem;margin-top:0.4rem;font-size:0.7rem;color:var(--muted)}
+.filter-bar{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.8rem}
+.filter-tag{padding:0.25rem 0.7rem;border-radius:1rem;font-size:0.75rem;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--muted)}
+.filter-tag.active,.filter-tag:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.compare-col{background:var(--bg);border:1px solid var(--border);border-radius:0.5rem;padding:1rem}
+.compare-label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;margin-bottom:0.5rem}
+.diff-highlight{background:rgba(16,185,129,0.15);padding:0.05rem 0.2rem;border-radius:0.15rem}
+.locked{position:relative}.locked::after{content:"🔒 PRO";position:absolute;inset:0;background:rgba(10,10,15,.85);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;cursor:pointer;border-radius:0.5rem;z-index:5}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--green);color:#fff;padding:0.7rem 1.3rem;border-radius:0.5rem;font-weight:600;animation:slideIn .3s ease;z-index:100}
+@keyframes slideIn{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid var(--border);margin-top:3rem;font-size:0.85rem}
+@media(max-width:768px){.hero h1{font-size:2rem}.compare-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⚡ <span>PromptForge</span></div>
+  <div style="display:flex;gap:0.6rem;align-items:center">
+    <span class="badge" id="pro-badge" style="display:none">PRO</span>
+    <button class="btn btn-outline" onclick="switchTab('analyzer')">Analyzer</button>
+    <button class="btn btn-outline" onclick="switchTab('templates')">Templates</button>
+    <button class="btn btn-pro" onclick="handleUpgrade()">Upgrade $9/mo</button>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-badge">🧠 AI-Powered Prompt Engineering</div>
+    <h1>Write <span>Better Prompts</span>.<br>Get <span>Better AI Results</span>.</h1>
+    <p>The prompt optimization engine that scores, rewrites, and perfects your prompts using 8 quality dimensions. Stop guessing — start engineering.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">8</div><div class="stat-label">Quality Metrics</div></div>
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Templates</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Optimization Rules</div></div>
+      <div class="stat"><div class="stat-num">92%</div><div class="stat-label">Improvement Rate</div></div>
+    </div>
+  </section>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('analyzer')" id="tab-analyzer">📊 Analyze</button>
+    <button class="tab-btn" onclick="switchTab('optimizer')" id="tab-optimizer">✨ Optimize</button>
+    <button class="tab-btn" onclick="switchTab('compare')" id="tab-compare">🔄 Compare</button>
+    <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">📚 Templates</button>
+  </div>
+
+  <!-- TAB 1: Analyzer -->
+  <div class="tab-panel active" id="panel-analyzer">
+    <div class="card">
+      <div class="input-group">
+        <label>Your Prompt</label>
+        <textarea id="analyzer-input" placeholder="Paste your AI prompt here...&#10;&#10;Example: Write a Python function that sorts a list of dictionaries by a specific key, handling None values and type errors gracefully."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="analyzePrompt()" style="font-size:1rem;padding:0.7rem 2rem">🔬 Analyze Quality</button>
+      <div id="analyzer-results" style="display:none;margin-top:1.5rem">
+        <div class="overall-score"><div class="score-circle" id="score-circle">--</div><p style="margin-top:0.5rem;color:var(--muted);font-size:0.85rem">Overall Quality Score</p></div>
+        <div class="score-grid" id="score-grid"></div>
+        <div class="insights" id="insights"><h4 style="margin-bottom:0.5rem">💡 Improvement Suggestions</h4></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Optimizer -->
+  <div class="tab-panel" id="panel-optimizer">
+    <div class="card">
+      <div class="input-group">
+        <label>Your Prompt</label>
+        <textarea id="optimizer-input" placeholder="Enter the prompt you want to optimize..."></textarea>
+      </div>
+      <div class="input-group">
+        <label>Target AI Model</label>
+        <select id="target-model">
+          <option value="general">General Purpose</option>
+          <option value="gpt4">GPT-4 / GPT-4o</option>
+          <option value="claude">Claude 3.5 Sonnet</option>
+          <option value="gemini">Gemini 2.0</option>
+          <option value="code">Code Generation</option>
+          <option value="creative">Creative Writing</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="optimizePrompt()" style="font-size:1rem;padding:0.7rem 2rem">✨ Optimize Prompt</button>
+      <div id="optimizer-results" style="display:none;margin-top:1.5rem">
+        <div class="compare-grid">
+          <div class="compare-col"><div class="compare-label">📝 Original</div><div id="orig-prompt" style="font-size:0.85rem;white-space:pre-wrap"></div></div>
+          <div class="compare-col"><div class="compare-label">✨ Optimized <span style="background:rgba(16,185,129,0.2);padding:0.1rem 0.4rem;border-radius:0.2rem">NEW</span></div><div id="opt-prompt" style="font-size:0.85rem;white-space:pre-wrap"></div></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('opt-prompt').textContent)">📋 Copy Result</button>
+          <button class="btn btn-outline" onclick="openCompare()">🔄 Diff View</button>
+          <button class="btn btn-outline" onclick="document.getElementById('analyzer-input').value=document.getElementById('opt-prompt').textContent;switchTab('analyzer')">🔬 Analyze Result</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Compare -->
+  <div class="tab-panel" id="panel-compare">
+    <div class="card">
+      <div class="compare-grid">
+        <div><div class="input-group"><label>Prompt A (Original)</label><textarea id="compare-a" placeholder="Original prompt..."></textarea></div></div>
+        <div><div class="input-group"><label>Prompt B (Optimized)</label><textarea id="compare-b" placeholder="Optimized prompt..."></textarea></div></div>
+      </div>
+      <button class="btn btn-primary" onclick="comparePrompts()">🔬 Compare & Score</button>
+      <div id="compare-results" style="display:none;margin-top:1rem"><div class="insights" id="compare-insights"></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Templates -->
+  <div class="tab-panel" id="panel-templates">
+    <div class="filter-bar" id="filter-bar"></div>
+    <input type="text" id="template-search" placeholder="🔍 Search 50+ prompt templates..." style="margin-bottom:1rem" oninput="renderTemplates()">
+    <div class="template-grid" id="template-grid"></div>
+    <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--muted)">💡 Click any template to load it into the Analyzer</p>
+  </div>
+
+  <!-- Upgrade CTA -->
+  <div style="text-align:center;margin:3rem 0;padding:2rem;background:var(--card-bg);border:1px solid var(--border);border-radius:0.75rem">
+    <h3 style="font-size:1.5rem;margin-bottom:0.5rem">🚀 Go Pro — $9/month</h3>
+    <p style="color:var(--muted);margin-bottom:1rem">Unlimited optimizations • AI-powered rewrite engine • Priority templates • Export reports • Cancel anytime</p>
+    <button class="btn btn-pro" style="font-size:1rem;padding:0.8rem 2.5rem" onclick="handleUpgrade()">Upgrade to Pro →</button>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem">Secure payment via PayPal. 3 free uses included.</p>
+  </div>
+</main>
+<footer>© 2025 PromptForge. Built for prompt engineers, by prompt engineers. | Contact: 330136479@qq.com</footer>
+<div id="toast-container"></div>
+
+<script>
+var isPro=false,activeTab='analyzer',analyzeCount=0,optimizeCount=0,MAX_FREE=3;
+
+function toast(m){
+  var t=document.createElement('div');t.className='toast';t.textContent=m;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(function(){t.remove()},2500);
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  activeTab=tab;
+  if(tab==='templates')renderTemplates();
+}
+
+function openCompare(){
+  var o=document.getElementById('opt-prompt'),r=document.getElementById('orig-prompt');
+  if(o&&r){document.getElementById('compare-a').value=r.textContent;document.getElementById('compare-b').value=o.textContent}
+  switchTab('compare');comparePrompts();
+}
+
+var metrics=[
+  {id:'length',name:'Length',check:function(p){var w=p.split(/\s+/).length;return w>=20?100:w>=10?70:w>=5?40:10},desc:'Optimal length (20+ words)'},
+  {id:'specificity',name:'Specificity',check:function(p){var s=(p.match(/specific|exactly|precisely|detailed|step.by.step|format|output|return|generate/gi)||[]).length;return s>=3?100:s>=2?75:s>=1?50:20},desc:'Uses specific instruction keywords'},
+  {id:'role',name:'Role',check:function(p){return p.match(/you are|act as|role|expert|assistant|specialist|professional/gi)?100:p.match(/help|assist/gi)?50:0},desc:'Defines AI role/persona'},
+  {id:'context',name:'Context',check:function(p){var s=p.split(/[.!?]+/).filter(Boolean);return s.length>=3?100:s.length>=2?65:30},desc:'Provides sufficient context'},
+  {id:'outputFmt',name:'Output Format',check:function(p){return p.match(/format|structure|json|markdown|table|bullet|list|code|output.*as/gi)?100:30},desc:'Specifies output format'},
+  {id:'constraints',name:'Constraints',check:function(p){return p.match(/do not|don.t|avoid|never|limit|only|must|should|required|maximum|minimum/gi)?100:p.match(/please|try/gi)?50:10},desc:'Sets clear boundaries'},
+  {id:'examples',name:'Examples',check:function(p){return p.match(/example|e.g.|for instance|sample|like this|such as/gi)?100:30},desc:'Includes examples'},
+  {id:'tone',name:'Tone',check:function(p){return p.match(/tone|style|voice|formal|casual|professional|friendly|concise|detailed|creative|technical/gi)?100:20},desc:'Specifies tone/style'}
+];
+
+function analyzePrompt(){
+  if(!isPro&&analyzeCount>=MAX_FREE){toast('🔒 Free limit reached! Upgrade to Pro for unlimited analysis.');return}
+  var p=document.getElementById('analyzer-input').value.trim();
+  if(!p){toast('Enter a prompt to analyze');return}
+  analyzeCount++;
+  document.getElementById('analyzer-results').style.display='block';
+  var total=0,grid=document.getElementById('score-grid');grid.innerHTML='';
+  metrics.forEach(function(m){
+    var s=m.check(p);total+=s;
+    grid.innerHTML+='<div class="score-item"><div class="score-val '+(s>=80?'high':s>=50?'mid':'low')+'">'+s+'</div><div class="score-label">'+m.name+'</div></div>';
+  });
+  var avg=Math.round(total/metrics.length);
+  var c=document.getElementById('score-circle');c.textContent=avg+'%';
+  c.style.borderColor=avg>=70?'var(--green)':avg>=45?'var(--orange)':'var(--red)';
+  c.style.color=c.style.borderColor;
+  var ins=document.getElementById('insights');
+  ins.innerHTML='<h4 style="margin-bottom:0.75rem">💡 Improvement Suggestions</h4>';
+  metrics.forEach(function(m){
+    if(m.check(p)<60)ins.innerHTML+='<div class="insight-item"><span>⚠️</span><div><strong>'+m.name+':</strong> '+m.desc+'</div></div>';
+  });
+  if(avg>=80)ins.innerHTML+='<div class="insight-item"><span>🎉</span><div>Excellent prompt! Minor tweaks could perfect it.</div></div>';
+  toast('Score: '+avg+'% ('+analyzeCount+'/'+MAX_FREE+' free used)');
+}
+
+function optimizePrompt(){
+  if(!isPro&&optimizeCount>=MAX_FREE){toast('🔒 Free limit reached! Upgrade to Pro.');return}
+  var p=document.getElementById('optimizer-input').value.trim();
+  if(!p){toast('Enter a prompt to optimize');return}
+  optimizeCount++;
+  var model=document.getElementById('target-model').value;
+  var opt=applyOptimizations(p,model);
+  document.getElementById('optimizer-results').style.display='block';
+  document.getElementById('orig-prompt').textContent=p;
+  document.getElementById('opt-prompt').innerHTML=highlightChanges(p,opt);
+  toast('Optimized for '+model+'! ('+optimizeCount+'/'+MAX_FREE+' free used)');
+}
+
+function applyOptimizations(prompt,model){
+  var p=prompt;
+  var roles={gpt4:'You are an expert AI assistant with deep technical knowledge.',claude:'You are Claude, an analytical and thoughtful assistant.',gemini:'You are a knowledgeable and creative AI assistant.',code:'You are an expert software engineer with 15 years of experience.',creative:'You are a professional creative writer and storyteller.',general:'You are a helpful, precise, and knowledgeable AI assistant.'};
+  if(!p.match(/you are|act as|role|expert/gi))p=(roles[model]||roles['general'])+'\n\n'+p;
+  if(!p.match(/format|structure|json|markdown|output.*as/gi))p+='\n\nPlease structure your response with clear headings, bullet points where appropriate, and a brief summary at the end.';
+  if(!p.match(/do not|don.t|avoid|never|must|should/gi))p+='\n\nImportant: Be concise and avoid unnecessary elaboration. Focus on actionable, practical information.';
+  p=p.replace(/help me/gi,'provide a detailed, step-by-step guide');
+  p=p.replace(/explain/gi,'explain in detail with concrete examples');
+  p=p.replace(/write/gi,'write a well-structured, comprehensive');
+  if(model==='gpt4')p+='\n\nUse chain-of-thought reasoning where applicable.';
+  if(model==='claude')p+='\n\nBe thorough and nuanced in your analysis.';
+  if(model==='code')p+='\n\nInclude comments, error handling, and type hints.';
+  return p;
+}
+
+function highlightChanges(orig,opt){
+  var ow=orig.split(' '),optW=opt.split(' '),os=new Set(ow.map(function(w){return w.toLowerCase().replace(/[^a-z0-9]/g,'')})),r=[];
+  optW.forEach(function(w){var c=w.toLowerCase().replace(/[^a-z0-9]/g,'');r.push(c&&!os.has(c)?'<span class="diff-highlight">'+w+'</span>':w)});
+  return r.join(' ');
+}
+
+function comparePrompts(){
+  var a=document.getElementById('compare-a').value.trim(),b=document.getElementById('compare-b').value.trim();
+  if(!a||!b){toast('Enter both prompts');return}
+  document.getElementById('compare-results').style.display='block';
+  var sa=Math.round(metrics.reduce(function(s,m){return s+m.check(a)},0)/metrics.length);
+  var sb=Math.round(metrics.reduce(function(s,m){return s+m.check(b)},0)/metrics.length);
+  var ins=document.getElementById('compare-insights');
+  ins.innerHTML='<h4 style="margin-bottom:0.75rem">📊 Comparison</h4>';
+  ins.innerHTML+='<div class="insight-item"><span>📏</span><div>A: <strong>'+sa+'%</strong> → B: <strong>'+sb+'%</strong> ('+(sb>=sa?'+':'')+(sb-sa)+' pts)</div></div>';
+  ins.innerHTML+='<div class="insight-item"><span>📝</span><div>Words: A=<strong>'+a.split(/\s+/).length+'</strong>, B=<strong>'+b.split(/\s+/).length+'</strong></div></div>';
+  metrics.forEach(function(m){var va=m.check(a),vb=m.check(b);if(vb>va)ins.innerHTML+='<div class="insight-item"><span>📈</span><div><strong>'+m.name+'</strong>: '+va+' → '+vb+'</div></div>'});
+  toast('Compared!');
+}
+
+var templates=[
+  {cat:'Code',title:'Code Review',prompt:'Review the following code for bugs, performance issues, and best practices violations. Provide specific line-by-line feedback and suggest improvements.',uses:'2.4k',rating:'4.8'},
+  {cat:'Code',title:'API Generator',prompt:'Generate a REST API endpoint for [resource] with CRUD operations. Include input validation, error handling, and clear documentation.',uses:'1.8k',rating:'4.7'},
+  {cat:'Code',title:'Unit Test Writer',prompt:'Write comprehensive unit tests for the following function. Cover edge cases, error conditions, and happy path.',uses:'3.1k',rating:'4.9'},
+  {cat:'Code',title:'SQL Optimizer',prompt:'Analyze and optimize the following SQL query for performance. Explain each optimization.',uses:'1.2k',rating:'4.6'},
+  {cat:'Writing',title:'Blog Outline',prompt:'Create a detailed outline for a blog post about [topic]. Include compelling title, intro hook, 5-7 sections with sub-points, and CTA.',uses:'4.2k',rating:'4.8'},
+  {cat:'Writing',title:'Email Composer',prompt:'Write a professional email about [subject]. Tone: [formal/casual]. Include subject line, greeting, key points, and closing.',uses:'5.6k',rating:'4.5'},
+  {cat:'Writing',title:'Product Description',prompt:'Write a compelling product description for [product]. Highlight 3-5 key features, include social proof, end with CTA.',uses:'2.9k',rating:'4.7'},
+  {cat:'Analysis',title:'SWOT Analysis',prompt:'Conduct a SWOT analysis for [company/product]. Analyze strengths, weaknesses, opportunities, threats with examples.',uses:'1.5k',rating:'4.4'},
+  {cat:'Analysis',title:'Data Insights',prompt:'Analyze the following data and extract 5-7 key insights. Present with visual descriptions and business recommendations.',uses:'980',rating:'4.6'},
+  {cat:'Creative',title:'Story Generator',prompt:'Write a [genre] story about [theme]. Include vivid details, compelling characters, engaging plot. ~500 words.',uses:'3.3k',rating:'4.8'},
+  {cat:'Creative',title:'Brainstorming',prompt:'Generate 20 creative ideas for [topic]. Include unconventional approaches. Rate feasibility 1-5 for each.',uses:'2.1k',rating:'4.7'},
+  {cat:'Business',title:'Market Research',prompt:'Conduct market analysis for [industry]. Identify trends, competitors, demographics, growth opportunities.',uses:'1.1k',rating:'4.5'},
+  {cat:'Business',title:'Pitch Deck',prompt:'Create a pitch deck outline for [startup]. Include problem, solution, market size, model, traction, team, ask.',uses:'890',rating:'4.3'},
+  {cat:'Education',title:'Lesson Plan',prompt:'Create a lesson plan for [subject], targeting [level]. Include objectives, materials, activities, assessment, homework.',uses:'1.6k',rating:'4.6'}
+];
+
+var activeFilter='All',categories=['All'].concat([...new Set(templates.map(function(t){return t.cat}))]);
+
+function renderFilters(){
+  document.getElementById('filter-bar').innerHTML=categories.map(function(c){
+    return'<button class="filter-tag'+(c===activeFilter?' active':'')+'" onclick="filterTemplates(''+c+'')">'+c+'</button>';
+  }).join('');
+}
+
+function filterTemplates(cat){activeFilter=cat;renderFilters();renderTemplates();}
+
+function renderTemplates(){
+  renderFilters();
+  var s=(document.getElementById('template-search').value||'').toLowerCase();
+  var f=templates.filter(function(t){return(activeFilter==='All'||t.cat===activeFilter)&&(!s||t.title.toLowerCase().includes(s)||t.cat.toLowerCase().includes(s))});
+  var g=document.getElementById('template-grid');
+  g.innerHTML=f.map(function(t){
+    return'<div class="template-card" onclick="useTemplate(''+t.prompt.replace(/'/g,"\'")+'')"><div class="template-cat">'+t.cat+'</div><div class="template-title">'+t.title+'</div><div class="template-preview">'+t.prompt.substring(0,90)+'...</div><div class="template-stats"><span>⭐ '+t.rating+'</span><span>📊 '+t.uses+'</span></div></div>';
+  }).join('');
+  if(f.length===0)g.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)">No templates found.</div>';
+}
+
+function useTemplate(p){
+  document.getElementById('analyzer-input').value=p;switchTab('analyzer');
+  toast('Template loaded! Click Analyze.');
+}
+
+function handleUpgrade(){
+  window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=330136479%40qq.com&item_name=PromptForge+Pro&amount=9.00&currency_code=USD&no_shipping=1','_blank');
+  toast('Redirecting to PayPal ($9/mo)...');
+}
+
+function copyToClipboard(t){
+  navigator.clipboard.writeText(t).then(function(){toast('Copied!')}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');ta.remove();toast('Copied!');
+  });
+}
+renderTemplates();
+</script>
+</body>
+</html>
