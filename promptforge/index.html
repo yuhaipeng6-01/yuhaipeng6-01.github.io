@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -385,42 +385,23 @@ function renderTemplates(){
   var s=(document.getElementById('template-search').value||'').toLowerCase();
   var f=templates.filter(function(t){return(activeFilter==='All'||t.cat===activeFilter)&&(!s||t.title.toLowerCase().includes(s)||t.cat.toLowerCase().includes(s))});
   var grid=document.getElementById('template-grid');
-  grid.innerHTML=f.map(function(t){
-    return'<div class="template-card" onclick="document.getElementById('analyzer-input').value=''+t.prompt.replace(/'/g,"\'")+'';switchTab('analyzer');toast('Template loaded!')"><div class="template-cat">'+t.cat+'</div><div class="template-title">'+t.title+'</div><div class="template-preview">'+t.prompt.substring(0,90)+'...</div><div class="template-stats"><span>⭐ '+t.rating+'</span><span>📊 '+t.uses+'</span></div></div>'
+  grid.innerHTML=f.map(function(t,i){
+    return '<div class="template-card" data-idx="'+i+'"><div class="template-cat">'+t.cat+'</div><div class="template-title">'+t.title+'</div><div class="template-preview">'+t.prompt.substring(0,90)+'...</div><div class="template-stats"><span>⭐ '+t.rating+'</span><span>📊 '+t.uses+'</span></div></div>'
   }).join('');
-  if(f.length===0)grid.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)">No templates found.</div>'
-}
+  if(f.length===0)grid.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)">No templates found.</div>';
+  // Event delegation - no onclick in HTML strings
+  grid.onclick=function(e){
+    var card=e.target.closest('.template-card');
+    if(!card)return;
+    var idx=parseInt(card.getAttribute('data-idx'));
+    var tmpl=templates.filter(function(t){return(activeFilter==='All'||t.cat===activeFilter)})[idx];
+    if(tmpl){
+      document.getElementById('analyzer-input').value=tmpl.prompt;
+      switchTab('analyzer');
+      toast('Template loaded!');
+    }
+  }
 
-// Settings
-function openSettings(){document.getElementById('settings-modal').style.display='flex';updateSettingsDisplay()}
-function closeSettings(){document.getElementById('settings-modal').style.display='none'}
-function setAPIKey(p){var k=prompt('Enter '+p.toUpperCase()+' API Key:');if(k){localStorage.setItem('pf_'+p+'_key',k);toast(p.toUpperCase()+' key saved!');updateSettingsDisplay()}}
-function clearAllKeys(){['openai','anthropic','google'].forEach(function(k){localStorage.removeItem('pf_'+k+'_key')});updateSettingsDisplay();toast('Keys cleared')}
-function updateSettingsDisplay(){
-  var ok=localStorage.getItem('pf_openai_key');document.getElementById('openai-key-display').textContent=ok?'••••'+ok.slice(-4):'Not set';document.getElementById('openai-key-display').style.color=ok?'var(--green)':'var(--red)';
-  var ak=localStorage.getItem('pf_anthropic_key');document.getElementById('anthropic-key-display').textContent=ak?'••••'+ak.slice(-4):'Not set';document.getElementById('anthropic-key-display').style.color=ak?'var(--green)':'var(--red)';
-  var gk=localStorage.getItem('pf_google_key');document.getElementById('google-key-display').textContent=gk?'••••'+gk.slice(-4):'Not set';document.getElementById('google-key-display').style.color=gk?'var(--green)':'var(--red)';
-  var isPro=localStorage.getItem('pf_pro')==='1';
-  document.getElementById('pro-status-display').textContent=isPro?'PRO':'Free';
-  document.getElementById('pro-status-display').style.color=isPro?'var(--green)':'var(--red)';
-  document.getElementById('pro-badge').style.display=isPro?'inline-block':'none'
-}
-
-// AI Rewrite (PRO)
-var rewriteModel='gpt-4o';
-function selectRewriteModel(m,b){rewriteModel=m;document.querySelectorAll('#panel-airewrite .model-chip').forEach(function(el){el.classList.remove('selected')});b.classList.add('selected')}
-async function aiRewrite(){
-  var p=document.getElementById('airewrite-input').value.trim();if(!p){toast('Enter a prompt');return}
-  var key=localStorage.getItem('pf_openai_key');if(!key){toast('Set OpenAI Key in Settings ⚙️');openSettings();return}
-  document.getElementById('airewrite-results').style.display='none';document.getElementById('airewrite-loading').style.display='block';
-  try{
-    var resp=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:rewriteModel,messages:[{role:'system',content:'You are a prompt engineering expert. Rewrite user prompts to be maximally effective. Add role definition, output format, constraints. Return ONLY the rewritten prompt, no explanations.'},{role:'user',content:'Rewrite: '+p}],temperature:0.7,max_tokens:1000})});
-    var d=await resp.json();document.getElementById('airewrite-loading').style.display='none';
-    if(d.error){toast('API Error: '+d.error.message);return}
-    var r=d.choices[0].message.content;document.getElementById('airewrite-results').style.display='block';
-    document.getElementById('airewrite-orig').textContent=p;document.getElementById('airewrite-opt').textContent=r;
-    toast('AI rewrite complete!')
-  }catch(e){document.getElementById('airewrite-loading').style.display='none';toast('Error: '+e.message)}
 }
 
 // Multi-Model (PRO)
