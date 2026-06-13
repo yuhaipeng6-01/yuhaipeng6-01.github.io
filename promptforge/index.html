@@ -394,11 +394,11 @@ var asl=Math.round(wc/sc),pl=p.toLowerCase();
 var factors=[];
 function A(c,i,n,s,w,d){factors.push({cat:c,id:i,name:n,score:Math.min(100,Math.max(0,Math.round(s))),weight:w,detail:d||""})}
 
-var ls=wc>=60?100:wc>=40?90:wc>=25?75:wc>=15?55:wc>=8?30:10;
+var ls=wc>=60?100:wc>=40?90:wc>=25?75:wc>=15?55:wc>=8?35:15;
 A("Foundation","F1","Length",ls,6,wc<15?"Too short. Aim 25+ words.":"Good length.");
 var lo=s.filter(function(x){return x.split(/\s+/).length>15}).length;
 var shN=s.filter(function(x){return x.split(/\s+/).length<6}).length;
-var vs=(sc>=5&&lo>0&&shN>0)?100:(sc>=5&&(lo>0||shN>0))?80:sc>=3?60:30;
+var vs=(sc>=5&&lo>0&&shN>0)?100:(sc>=5&&(lo>0||shN>0))?80:sc>=3?65:40;
 A("Foundation","F2","Sentence Variety",vs,4,sc<3?"Break into more sentences.":"Good variety.");
 var av=(p.match(/\b(write|create|generate|build|implement|design|develop|code|craft|produce|compose|construct|make|do|perform|execute|run|test|check|verify|validate|review|audit|inspect|examine|analyze|assess|evaluate|measure|compare|contrast|summarize|explain|describe|define|identify|list|name|state|outline|translate|convert|transform|parse|extract|format|sort|filter|group|merge|split|join|count|calculate|compute|debug|fix|resolve|optimize|refactor|deploy|configure|install|setup|initialize|compile|render|display|show|output|return|respond|answer|provide|deliver|solve|determine|find|search|lookup|query)\b/gi)||[]).length;
 var dn=(av/Math.max(1,wc))*100;
@@ -427,12 +427,12 @@ var ds2=ns>=4?100:ns>=2||bs>=4?85:ns>=1||bs>=2?65:sw>=3?55:sw>=1?35:10;
 A("Structure","F6","Task Decomposition",ds2,6,ds2<35?"Break into numbered steps.":"Well-decomposed.");
 
 var fp=(p.match(/\b(if|when|then|therefore|thus|hence|consequently|as a result|because|since|due to|so that|in order to)\b/gi)||[]).length;
-var fs=fp>=5?100:fp>=3?80:fp>=1?50:20;
+var fs=fp>=5?100:fp>=3?85:fp>=1?60:35;
 A("Structure","F7","Logical Flow",fs,5,fp<1?"Add conditional logic (if/when/then).":"Strong flow.");
 
 var pw=(p.match(/\b(critical|crucial|essential|important|vital|key|priority|must|required|mandatory|imperative|paramount|above all|most importantly|first and foremost)\b/gi)||[]).length;
 var em=(p.match(/\*[\s\S]+?\*|`[^`]+`|"[^"]+"/g)||[]).length;
-var ps=(pw>=2&&em>=2)?100:(pw>=1||em>=3)?75:em>=1?45:15;
+var ps=(pw>=2&&em>=2)?100:(pw>=1||em>=3)?80:em>=1?55:25;
 A("Structure","F8","Priority Signaling",ps,4,pw<1?"Mark critical items with emphasis.":"Good priority signals.");
 
 // Precision
@@ -449,7 +449,7 @@ A("Precision","F10","Constraint Quality",csN,7,hcN<1?"Add hard constraints (must
 var es=(p.match(/(?:example|e\.g\.|for instance|sample|like this|such as|here is|demo|illustration).{0,200}/gi)||[]);
 var hcd=/```[\s\S]*?```|`[^`]{10,}`/.test(p);
 var hse=/\b(input|output|before|after)\s*:/i.test(p);
-var exs=(hse&&es.length>=2)?100:(hcd&&es.length>=1)?85:es.length>=2?75:es.length>=1?55:/example|e\.g\./i.test(p)?35:12;
+var exs=(hse&&es.length>=2)?100:(hcd&&es.length>=1)?85:es.length>=2?75:es.length>=1?60:/example|e\.g\./i.test(p)?40:22;
 A("Precision","F11","Example Quality",exs,6,es.length<1?"Add concrete examples.":"Strong examples.");
 
 var cd=(p.match(/\b(\d+)\s*(words|characters|paragraphs|sentences|lines|pages|tokens|items|results|entries|rows|columns|minutes|seconds|hours|days|steps|stages|levels|layers|chapters|sections|versions?|degrees?|percent|percentage|px|em|rem|kb|mb|gb|api|calls?|requests?)\b/gi)||[]).length;
@@ -459,21 +459,21 @@ A("Precision","F12","Specificity",sps,5,cd<2?"Replace vague terms with numbers."
 
 // Context
 var cp=(p.match(/\b(because|since|given that|assuming|considering|in the context of|regarding|concerning|about|related to|pertaining to|based on|according to|with respect to|in light of|due to|as per)\b/gi)||[]).length;
-var ctx=cp>=4?100:cp>=2?75:cp>=1?50:18;
+var ctx=cp>=4?100:cp>=2?80:cp>=1?60:30;
 A("Context","F13","Background Context",ctx,5,cp<1?"Add context: why and what matters.":"Good context.");
 
 var doms=["python","javascript","typescript","react","vue","angular","node","next","nuxt","api","rest","graphql","database","sql","nosql","postgres","mongodb","redis","aws","azure","gcp","docker","kubernetes","terraform","frontend","backend","fullstack","devops","ml","ai","llm","nlp","data science","analytics","blockchain","web3","crypto","security","mobile","ios","android","desktop","embedded","iot","healthcare","finance","education","gaming","ecommerce","marketing","linux","windows","macos","git","github","vscode"];
 var dh=0;for(var di=0;di<doms.length;di++){if(pl.indexOf(doms[di])!==-1)dh++;}
-var dms=dh>=4?100:dh>=3?90:dh>=2?75:dh>=1?55:20;
+var dms=dh>=4?100:dh>=3?90:dh>=2?75:dh>=1?55:30;
 A("Context","F14","Domain Specificity",dms,5,dh<1?"Specify domain/tech stack.":"Strong domain grounding.");
 
 var lw=(p.match(/\b(beginner|novice|junior|intermediate|advanced|expert|senior|technical|non.technical|layperson|specialist|generalist)\b/gi)||[]).length;
-var aus=lw>=2?70:lw>=1?45:12;
+var aus=lw>=2?75:lw>=1?55:25;
 A("Context","F15","Audience Targeting",aus,5,lw<1?"Specify target audience level.":"Good targeting.");
 
 // Robustness
 var et=(p.match(/\b(error|exception|edge case|corner case|failure|invalid|null|undefined|empty|missing|wrong|incorrect|unexpected|fallback|default|graceful|robust|safe|reliable|handle|catch|recover|retry|timeout|overflow|underflow)\b/gi)||[]).length;
-var ers=et>=5?100:et>=3?75:et>=1?45:10;
+var ers=et>=5?100:et>=3?80:et>=1?55:20;
 A("Robustness","F16","Error Handling",ers,4,et<1?"Address potential errors.":"Good error awareness.");
 
 var fw=(p.match(/\b(just|really|very|quite|actually|basically|literally|honestly|frankly|essentially|truly|simply|merely|only|almost)\b/gi)||[]).length;
@@ -481,21 +481,21 @@ var cls=Math.max(5,Math.min(100,95-fw));
 A("Robustness","F17","Clarity",cls,3,fw>4?"Cut filler words (just, really).":"Clear language.");
 
 var st=(p.match(/\b(do not|never|avoid|refrain|prohibit|forbidden|banned|unsafe|harmful|toxic|bias|unfair|discriminat|inappropriate|offensive|illegal|unethical|dangerous|malicious)\b/gi)||[]).length;
-var sfs=st>=3?100:st>=1?65:25;
+var sfs=st>=3?100:st>=1?70:40;
 A("Robustness","F18","Safety Guardrails",sfs,3,st>=1?"Safety constraints present.":"Consider safety if applicable.");
 
 // Enhancement
 var ct=(p.match(/\b(think step by step|reason through|explain your reasoning|show your work|walk me through|step.by.step|chain.of.thought|first.*then.*finally|break.*down|analyze.*step|consider.*carefully)\b/gi)||[]).length;
-var cts=ct>=2?100:ct>=1?70:10;
+var cts=ct>=2?100:ct>=1?75:20;
 A("Enhancement","F19","Chain-of-Thought",cts,3,ct<1?"Add reasoning directive.":"Good CoT usage.");
 
 var it=(p.match(/\b(iterate|refine|improve|revise|polish|enhance|optimize|adjust|tweak|update|modify|rewrite|rephrase|restructure|reorganize|redo)\b/gi)||[]).length;
-var its=it>=2?100:it>=1?65:15;
+var its=it>=2?100:it>=1?70:25;
 A("Enhancement","F20","Iteration Readiness",its,2,it<1?"Build in iteration for refinement.":"Good iteration signaling.");
 
 var cr=(p.match(/\b(concise|brief|short|succinct|terse|compact|minimal|summarize|tl;dr|to the point|no fluff|get to the point|skip the preamble|directly|straight to)\b/gi)||[]).length;
 var ta=(p.match(/\b(use \d+ tokens|limit to \d+ words|keep it under|maximum \d+|at most \d+|no more than \d+|budget|efficient)\b/gi)||[]).length;
-var tks=ta>=1?100:cr>=2?75:cr>=1?50:20;
+var tks=ta>=1?100:cr>=2?80:cr>=1?60:30;
 A("Enhancement","F21","Token Efficiency",tks,3,ta<1&&cr<1?"Set token/word limits.":"Good token awareness.");
 
 // Anti-patterns
@@ -524,15 +524,15 @@ var cb={};for(var cat in cS){cb[cat]=Math.round(cS[cat]/cW[cat]);}
 
 // Tier classification
 var tier,tc,te,tcs;
-if(fin>=80){tier="Excellent";tc="#10b981";te="🏆";tcs="t-Excellent"}
-else if(fin>=65){tier="Good";tc="#3b82f6";te="👍";tcs="t-Good"}
-else if(fin>=50){tier="Fair";tc="#f59e0b";te="🔧";tcs="t-Fair"}
-else if(fin>=30){tier="Needs Work";tc="#ef4444";te="⚠️";tcs="t-Needs-Work"}
-else{tier="Poor";tc="#dc2626";te="❌";tcs="t-Poor"}
+if(fin>=70){tier="Masterpiece";tc="#10b981";te="🏆";tcs="t-Excellent"}
+else if(fin>=55){tier="Professional";tc="#3b82f6";te="👍";tcs="t-Good"}
+else if(fin>=42){tier="Capable";tc="#f59e0b";te="🔧";tcs="t-Fair"}
+else if(fin>=25){tier="Developing";tc="#ef4444";te="🌱";tcs="t-Needs-Work"}
+else{tier="Getting Started";tc="#dc2626";te="🚀";tcs="t-Poor"}
 
 // Build diagnostics
 var dg=[];
-for(var i=0;i<factors.length;i++){var f=factors[i];if(f.score<35)dg.push({severity:"critical",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});else if(f.score<55)dg.push({severity:"warning",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});}
+for(var i=0;i<factors.length;i++){var f=factors[i];if(f.score<30)dg.push({severity:"critical",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});else if(f.score<50)dg.push({severity:"warning",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});}
 for(var ai=0;ai<ap.length;ai++){dg.push({severity:ap[ai].severity,factor:"Anti-Pattern",cat:"Global",advice:ap[ai].text,id:"AP"+ai});}
 dg.sort(function(a,b){var o={critical:0,warning:1,info:2};return(o[a.severity]||3)-(o[b.severity]||3);});
 
