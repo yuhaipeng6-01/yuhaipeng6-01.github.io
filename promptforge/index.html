@@ -134,6 +134,28 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
 @keyframes scorePulse{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
 .score-gauge .value.pulse{animation:scorePulse 0.4s ease}
 .v2-section-title{font-size:0.82rem;font-weight:700;color:var(--muted);margin:1.2rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.05em}
+
+/* Pro gating */
+.pro-cta-inline{display:inline-flex;align-items:center;gap:0.3rem;padding:0.3rem 0.8rem;border-radius:2rem;font-size:0.72rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;cursor:pointer;font-weight:600;margin-left:0.3rem;animation:glow 2s infinite}
+.pro-cta-inline:hover{transform:scale(1.03)}
+.pro-cta-banner{display:flex;align-items:center;gap:0.8rem;padding:0.8rem 1rem;border-radius:10px;background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(167,139,250,0.08));border:1px solid rgba(124,58,237,0.3);cursor:pointer;margin-top:1rem;transition:all 0.2s}
+.pro-cta-banner:hover{border-color:var(--accent2);background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(167,139,250,0.12))}
+.pro-cta-banner span{font-size:1.5rem}
+.pro-cta-banner strong{display:block;color:var(--text)}
+.pro-cta-banner small{color:var(--muted)}
+.strat-chip.locked{background:rgba(107,107,128,0.1);border:1px dashed var(--border);color:var(--muted);opacity:0.6}
+.pro-badge{display:inline-flex;align-items:center;gap:0.2rem;padding:0.15rem 0.5rem;border-radius:10px;font-size:0.65rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-transform:uppercase;letter-spacing:0.05em}
+.batch-table{width:100%;border-collapse:collapse;font-size:0.76rem;margin-top:0.5rem}
+.batch-table th{text-align:left;padding:0.4rem 0.6rem;color:var(--muted);border-bottom:2px solid var(--border);font-weight:600}
+.batch-table td{padding:0.4rem 0.6rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.batch-table tr:hover td{background:rgba(255,255,255,0.03)}
+.history-item{padding:0.6rem 0.8rem;border-radius:8px;border:1px solid var(--border);margin-bottom:0.4rem;transition:all 0.2s}
+.history-item:hover{background:var(--bg);border-color:var(--accent)}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(124,58,237,0.4)}50%{box-shadow:0 0 16px rgba(124,58,237,0.7)}}
+.pro-input-group{display:flex;gap:0.5rem;align-items:center}
+.pro-status{display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.6rem;border-radius:10px;font-size:0.72rem;font-weight:700}
+.pro-status.active{background:rgba(16,185,129,0.15);color:#10b981}
+.pro-status.inactive{background:rgba(107,107,128,0.1);color:var(--muted)}
 </style>
 </head>
 <body>
@@ -168,6 +190,9 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
   <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">📚 Templates</button>
   <button class="tab-btn" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite <small style="color:var(--accent2)">PRO</small></button>
   <button class="tab-btn" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model <small style="color:var(--accent2)">PRO</small></button>
+
+  <button class="tab-btn" onclick="switchTab(&apos;batch&apos;)" id="tab-batch">?? Batch <small style="color:var(--accent2)">PRO</small></button>
+  <button class="tab-btn" onclick="switchTab(&apos;history&apos;)" id="tab-history">?? History <small style="color:var(--accent2)">PRO</small></button>
 </div>
 <!-- TAB 1: Analyzer -->
 <div class="tab-panel active" id="panel-analyzer">
@@ -360,8 +385,40 @@ Example: You are an expert Python developer with 10 years of experience. Write a
     <div style="margin-top:1rem;display:flex;gap:0.4rem;justify-content:flex-end">
       <button class="btn btn-outline" onclick="clearAllKeys()">Clear Keys</button>
       <button class="btn btn-primary" onclick="closeSettings()">Done</button>
-    </div>
+    </div>        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <label style="color:var(--accent2);font-weight:700;margin-bottom:0.5rem;display:block">🔑 PromptForge Pro</label>
+          <div id="pro-status" style="margin-bottom:0.5rem"></div>
+          <div class="pro-input-group">
+            <input type="text" id="pro-key-input" placeholder="Enter Pro activation key" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.7rem;border-radius:6px;font-size:0.8rem;flex:1">
+            <button class="btn btn-primary" style="font-size:0.75rem;padding:0.4rem 0.8rem" onclick="activateProKey()">Activate</button>
+          </div>
+          <small style="color:var(--muted)">$5/month · <span style="cursor:pointer;color:var(--accent2);text-decoration:underline" onclick="handleUpgrade()">Get Pro Key</span></small>
+        </div>
   </div>
+
+<!-- Batch Scoring Panel -->
+<div class="tab-panel" id="panel-batch">
+  <div class="card">
+    <div class="pro-badge" style="margin-bottom:0.5rem">PRO</div>
+    <div class="input-group">
+      <label>Paste Multiple Prompts</label>
+      <textarea id="batch-input" placeholder="Paste multiple prompts separated by --- or blank lines..." style="min-height:180px"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="batchScorePrompts()">📊 Batch Score All</button>
+    <div id="batch-results" style="margin-top:1rem"></div>
+  </div>
+</div>
+<!-- History Panel -->
+<div class="tab-panel" id="panel-history">
+  <div class="card">
+    <div class="pro-badge" style="margin-bottom:0.5rem">PRO</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem">
+      <h5 style="color:var(--text)">Score History</h5>
+      <button class="btn btn-outline" style="font-size:0.7rem;padding:0.2rem 0.5rem" onclick="localStorage.removeItem('pf_history');renderHistory();toast('Cleared')">Clear</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -378,11 +435,19 @@ function switchTab(tab){
   var pn=document.getElementById('panel-'+tab);
   if(!tb||!pn){toast('Tab not found: '+tab);return}
   tb.classList.add('active');pn.classList.add('active');
-  if(tab==='templates')renderTemplates()
+  if(tab==='templates')renderTemplates();if(tab==='history')renderHistory()
 }
 
 var PF=PF||{};
 PF.catDefs={Foundation:{weight:20,color:"#6366f1"},Structure:{weight:22,color:"#8b5cf6"},Precision:{weight:25,color:"#3b82f6"},Context:{weight:15,color:"#06b6d4"},Robustness:{weight:10,color:"#10b981"},Enhancement:{weight:8,color:"#f59e0b"}};
+
+
+// ═══ PRO GATING ═══════════════════════════════════════
+PF.isPro=function(){return localStorage.getItem("pf_pro")==="true"};
+PF.activatePro=function(key){if(key==="PROMPTFORGE-PRO-2026"){localStorage.setItem("pf_pro","true");return true}return false};
+PF.PRO_KEY="PROMPTFORGE-PRO-2026";
+PF.FREE_STRATEGY_LIMIT=3;
+PF.FREE_DIAG_LIMIT=5;
 
 PF.scoreV2=function(p){
 p=(p||"").trim();
@@ -544,6 +609,8 @@ return{score:fin,tier:tier,tierColor:tc,tierEmoji:te,tierCSS:tcs,factors:factors
 
 var lastScoreResult=null;
 function analyzePromptV2(){
+  var isPro=PF.isPro();
+  var diagLimit=isPro?999:PF.FREE_DIAG_LIMIT;
   var p=document.getElementById("analyzer-input").value.trim();
   if(!p){toast("Enter a prompt to analyze");return}
   var result=PF.scoreV2(p);
@@ -590,17 +657,22 @@ function analyzePromptV2(){
   }
   ft.innerHTML=ftHTML;
 
-  // Diagnostics
+  // Diagnostics (gated for free)
+  var visibleDiag=result.diagnostics.slice(0,diagLimit);
+  var hiddenDiag=result.diagnostics.slice(diagLimit);
   var dc=document.getElementById("diag-count");
-  dc.textContent=result.diagnostics.length;
+  dc.textContent=visibleDiag.length+(hiddenDiag.length>0?"+"+hiddenDiag.length:"");
   var dl=document.getElementById("diag-list");
   var dlHTML="";
-  for(var i=0;i<result.diagnostics.length;i++){
+  for(var i=0;i<visibleDiag.length;i++){
     var d=result.diagnostics[i];
     var emoji=d.severity==="critical"?"🔴":d.severity==="warning"?"🟡":"🔵";
     dlHTML+='<div class="diag-item '+d.severity+'"><div class="diag-sev">'+emoji+" "+d.severity+'</div><div class="diag-body"><strong>'+d.factor+'</strong> ('+d.cat+'): '+d.advice+'</div></div>';
   }
   dl.innerHTML=dlHTML;
+  if(hiddenDiag.length>0&&!isPro){
+    dl.innerHTML+='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>🔓</span><div><strong>'+hiddenDiag.length+' more diagnostics hidden</strong><br><small>Upgrade to Pro for full analysis</small></div></div>';
+  }
   showFactorsView();
   toast("Score: "+result.score+"% | "+result.tier);
 }
@@ -719,6 +791,8 @@ PF.optimizeV2=function(prompt,model){
 };
 
 function optimizePromptV2(){
+  var isPro=PF.isPro();
+  var stratLimit=isPro?99:PF.FREE_STRATEGY_LIMIT;
   var p=document.getElementById("optimizer-input").value.trim();
   if(!p){toast("Enter a prompt to optimize");return}
   var model=document.getElementById("target-model").value;
@@ -738,8 +812,16 @@ function optimizePromptV2(){
   else{imp.textContent="no change";imp.style.color="var(--muted)";}
 
   // Strategies
+  // Free tier: show locked strategies
+  var appliedStrats=result.strategies.slice(0,stratLimit);
+  var remainingStrats=result.strategies.slice(stratLimit);
   var ss=document.getElementById("opt-strategies");
-  ss.innerHTML=result.strategies.map(function(s){return '<span class="strat-chip applied" title="'+s.desc+'">'+s.name+'</span>';}).join("");
+  var stratHTML=appliedStrats.map(function(s){return '<span class="strat-chip applied" title="'+s.desc+'">'+s.name+'</span>';}).join("");
+  if(remainingStrats.length>0&&!isPro){
+    stratHTML+=remainingStrats.map(function(s){return '<span class="strat-chip locked" title="Pro only: '+s.desc+'">🔒 '+s.name+'</span>';}).join("");
+    stratHTML+='<span class="pro-cta-inline" onclick="handleUpgrade()">🔓 Unlock all '+result.strategies.length+' strategies with Pro</span>';
+  }
+  ss.innerHTML=stratHTML;
 
   // Before/After
   document.getElementById("orig-prompt").textContent=result.original;
@@ -750,6 +832,108 @@ function optimizePromptV2(){
   optEl.innerHTML=hl;
   toast("Optimized: "+result.scoreBefore+"% \u2192 "+result.scoreAfter+"% ("+(result.improvement>0?"+":"")+result.improvement+"%)");
 }
+
+// ═══ BATCH SCORING (Pro) ═══════════════════════════════
+function batchScorePrompts(){
+  if(!PF.isPro()){toast("Batch scoring requires Pro");handleUpgrade();return}
+  var input=document.getElementById("batch-input").value.trim();
+  if(!input){toast("Paste prompts to batch analyze");return}
+  var prompts=input.split(/\n---\n|\n\n\n/).filter(function(p){return p.trim().length>0});
+  if(prompts.length===0){
+    prompts=input.split(/\n(?=You are|Act as|Role:|Write|Create|Generate|Analyze|Explain|I need)/i).filter(function(p){return p.trim().length>0});
+  }
+  if(prompts.length===0)prompts=[input];
+  
+  var results=prompts.map(function(p,i){
+    var r=PF.scoreV2(p.trim());
+    return {index:i+1,prompt:p.trim().substring(0,80),score:r.score,tier:r.tier,taskType:r.taskType,result:r};
+  });
+  
+  results.sort(function(a,b){return b.score-a.score});
+  
+  var grid=document.getElementById("batch-results");
+  var html='<table class="batch-table"><thead><tr><th>#</th><th>Prompt</th><th>Score</th><th>Tier</th><th>Task</th></tr></thead><tbody>';
+  results.forEach(function(r){
+    var cls=r.score>=70?"high":r.score>=55?"mid":r.score>=42?"mid":"low";
+    html+='<tr onclick="document.getElementById(\'analyzer-input\').value=document.getElementById(\'batch-input\').value.split(/\\n---\\n|\\n\\n\\n/).filter(function(p){return p.trim().length>0})['+(r.index-1)+']||\'\';switchTab(\'analyzer\');analyzePromptV2()" style="cursor:pointer"><td>'+r.index+'</td><td>'+r.prompt+'...</td><td class="factor-score '+cls+'">'+r.score+'%</td><td>'+r.tier+'</td><td>'+r.taskType+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  html+='<div style="margin-top:0.5rem;color:var(--muted);font-size:0.75rem">Avg: '+Math.round(results.reduce(function(s,r){return s+r.score},0)/results.length)+'% | Best: '+results[0].score+'% | Click row to analyze</div>';
+  grid.innerHTML=html;
+  toast("Scored "+results.length+" prompts");
+}
+
+// ═══ SCORE HISTORY (Pro) ═══════════════════════════════
+function saveToHistory(prompt,result){
+  if(!PF.isPro())return;
+  var hist=JSON.parse(localStorage.getItem("pf_history")||"[]");
+  hist.unshift({
+    date:new Date().toISOString(),
+    prompt:prompt.substring(0,200),
+    score:result.score,
+    tier:result.tier,
+    taskType:result.taskType
+  });
+  if(hist.length>50)hist=hist.slice(0,50);
+  localStorage.setItem("pf_history",JSON.stringify(hist));
+}
+
+function renderHistory(){
+  if(!PF.isPro()){document.getElementById("history-list").innerHTML='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>🔓</span><div><strong>Score History is Pro only</strong><br><small>Track your prompts over time</small></div></div>';return}
+  var hist=JSON.parse(localStorage.getItem("pf_history")||"[]");
+  var list=document.getElementById("history-list");
+  if(hist.length===0){list.innerHTML='<div style="text-align:center;padding:1rem;color:var(--muted)">No history yet. Analyze prompts to build history.</div>';return}
+  list.innerHTML=hist.map(function(h,i){
+    var d=new Date(h.date).toLocaleString();
+    var cls=h.score>=70?"high":h.score>=55?"mid":h.score>=42?"mid":"low";
+    return '<div class="history-item" onclick="document.getElementById(\'analyzer-input\').value=\''+h.prompt.replace(/'/g,"\\'")+'\';switchTab(\'analyzer\');analyzePromptV2()" style="cursor:pointer"><div><strong>'+h.prompt.substring(0,60)+'...</strong></div><div style="display:flex;gap:0.8rem;font-size:0.72rem;color:var(--muted)"><span class="factor-score '+cls+'">'+h.score+'%</span><span>'+h.tier+'</span><span>'+h.taskType+'</span><span>'+d+'</span></div></div>';
+  }).join("");
+}
+
+// ═══ EXPORT REPORT (Pro) ═══════════════════════════════
+function exportReport(format){
+  if(!PF.isPro()){toast("Export requires Pro");handleUpgrade();return}
+  var p=document.getElementById("analyzer-input").value.trim();
+  if(!p){toast("Analyze a prompt first");return}
+  var r=PF.scoreV2(p);
+  var report="";
+  
+  if(format==="markdown"){
+    report="# PromptForge Analysis Report\n\n";
+    report+="**Score:** "+r.score+"% | **Tier:** "+r.tier+" | **Task Type:** "+r.taskType+"\n\n";
+    report+="## Category Breakdown\n\n";
+    for(var cat in r.categoryBreakdown){
+      report+="- **"+cat+"**: "+r.categoryBreakdown[cat]+"%\n";
+    }
+    report+="\n## All Factors\n\n";
+    r.factors.forEach(function(f){
+      report+="| "+f.name+" | "+f.score+"% | "+f.cat+" | "+f.detail+" |\n";
+    });
+    report+="\n## Diagnostics\n\n";
+    r.diagnostics.forEach(function(d){
+      report+="- **["+d.severity+"]** "+d.factor+": "+d.advice+"\n";
+    });
+  }else{
+    report=JSON.stringify({score:r.score,tier:r.tier,taskType:r.taskType,categoryBreakdown:r.categoryBreakdown,factors:r.factors,diagnostics:r.diagnostics},null,2);
+  }
+  
+  var blob=new Blob([report],{type:"text/plain"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="promptforge-report."+(format==="markdown"?"md":"json");
+  a.click();
+  toast("Report downloaded!");
+}
+
+// Hook saveToHistory into analyzePromptV2
+var _origAnalyzePromptV2=analyzePromptV2;
+analyzePromptV2=function(){
+  _origAnalyzePromptV2();
+  if(lastScoreResult){
+    var p=document.getElementById("analyzer-input").value.trim();
+    saveToHistory(p,lastScoreResult);
+  }
+};
 
 
 // 8-dimension scoring engine
@@ -948,6 +1132,8 @@ switchTab=function(tab){
 
 loadCommunity();
 
+
+function activateProKey(){var k=document.getElementById('pro-key-input').value;if(PF.activatePro(k)){toast('Pro activated!');updateSettingsDisplay();closeSettings()}else{toast('Invalid key')}}
 </script>
 </body>
 </html>
