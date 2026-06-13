@@ -310,101 +310,14 @@ function switchTab(tab){
 // 8-dimension scoring engine
 var metrics=[
   {id:'len',name:'Length',check:function(p){var w=p.split(/\s+/).length;return w>=25?100:w>=15?75:w>=8?50:15}},
-  {id:'spec',name:'Specificity',check:function(p){return(p.match(/specific|exactly|precisely|detailed|step.by.step|output|return|generate|function|code|create/gi)||[]).length>=3?100:50}},
-  {id:'role',name:'Role',check:function(p){return p.match(/you are|act as|role|expert|specialist|professional|developer|engineer/gi)?100:p.match(/help|assist/gi)?40:0}},
-  {id:'ctx',name:'Context',check:function(p){return p.split(/[.!?]+/).filter(Boolean).length>=3?100:60}},
-  {id:'fmt',name:'Output Format',check:function(p){return p.match(/format|structure|json|markdown|table|bullet|list|paragraph|code|block/gi)?100:25}},
-  {id:'cstr',name:'Constraints',check:function(p){return p.match(/do not|don.t|avoid|never|limit|only|must|should|required/gi)?100:p.match(/please|try/gi)?45:5}},
-  {id:'ex',name:'Examples',check:function(p){return p.match(/example|e.g.|for instance|sample|like this|such as/gi)?100:25}},
-  {id:'tone',name:'Tone',check:function(p){return p.match(/tone|style|voice|formal|casual|professional|friendly|concise|detailed|creative|technical/gi)?100:15}}
-];
-
-function analyzePrompt(){
-  var p=document.getElementById('analyzer-input').value.trim();
-  if(!p){toast('Enter a prompt to analyze');return}
-  document.getElementById('analyzer-results').style.display='block';
-  var total=0,grid=document.getElementById('score-grid');grid.innerHTML='';
-  for(var i=0;i<metrics.length;i++){
-    var s=metrics[i].check(p);total+=s;
-    var cls=s>=80?'high':s>=50?'mid':'low';
-    grid.insertAdjacentHTML('beforeend','<div class="score-item"><div class="score-val '+cls+'">'+s+'</div><div class="score-label">'+metrics[i].name+'</div></div>');
-  }
-  var avg=Math.round(total/metrics.length);
-  var c=document.getElementById('score-circle');c.textContent=avg+'%';
-  var color=avg>=70?'var(--green)':avg>=45?'var(--orange)':'var(--red)';
-  c.style.borderColor=color;c.style.color=color;
-  var ins=document.getElementById('insights');
-  ins.innerHTML='<strong>💡 Improvement Suggestions</strong>';
-  for(var i=0;i<metrics.length;i++){
-    if(metrics[i].check(p)<55){ins.insertAdjacentHTML('beforeend','<div class="insight-item"><span>⚠️</span><div>Improve <strong>'+metrics[i].name+'</strong></div></div>')}
-  }
-  if(avg>=75)ins.insertAdjacentHTML('beforeend','<div class="insight-item"><span>🎉</span><div>Excellent prompt!</div></div>');
-  toast('Score: '+avg+'%');
-}
-
-// Optimizer engine
-function optimizePrompt(){
-  var p=document.getElementById('optimizer-input').value.trim();
-  if(!p){toast('Enter a prompt');return}
-  var model=document.getElementById('target-model').value;
-  var roles={general:'You are a helpful, precise, and knowledgeable AI assistant.',gpt4:'You are an expert AI assistant with deep technical knowledge.',claude:'You are Claude, an analytical and thoughtful assistant.',gemini:'You are a knowledgeable and creative AI assistant.',code:'You are an expert software engineer with 15 years of experience.',creative:'You are a professional creative writer and storyteller.'};
-  var opt=p;
-  if(!opt.match(/you are|act as|role|expert/gi))opt=(roles[model]||roles.general)+'\n\n'+opt;
-  if(!opt.match(/format|structure|json|markdown|output.*as|block/gi))opt+='\n\nPlease structure your response with clear headings and bullet points.';
-  if(!opt.match(/do not|don.t|avoid|never|must|should/gi))opt+='\n\nBe concise. Focus on actionable, practical information.';
-  opt=opt.replace(/help me/gi,'provide a detailed step-by-step guide');
-  opt=opt.replace(/explain/gi,'explain in detail with concrete examples');
-  opt=opt.replace(/write /gi,'write a well-structured, comprehensive ');
-  if(model==='gpt4')opt+='\n\nUse chain-of-thought reasoning.';
-  if(model==='code')opt+='\n\nInclude comments, error handling, and type hints.';
-  document.getElementById('optimizer-results').style.display='block';
-  document.getElementById('orig-prompt').textContent=p;
-  var ow=p.split(' '),optW=opt.split(' '),os=new Set(ow.map(function(w){return w.toLowerCase().replace(/[^a-z0-9]/g,'')}));
-  var hl=optW.map(function(w){var c=w.toLowerCase().replace(/[^a-z0-9]/g,'');return c&&!os.has(c)?'<span class="diff-highlight">'+w+'</span>':w}).join(' ');
-  document.getElementById('opt-prompt').innerHTML=hl;
-  toast('Optimized!');
-}
-
-function comparePrompts(){
-  var a=document.getElementById('compare-a').value.trim(),b=document.getElementById('compare-b').value.trim();
-  if(!a||!b){toast('Enter both prompts');return}
-  document.getElementById('compare-results').style.display='block';
-  var sa=Math.round(metrics.reduce(function(s,m){return s+m.check(a)},0)/metrics.length);
-  var sb=Math.round(metrics.reduce(function(s,m){return s+m.check(b)},0)/metrics.length);
-  var ins=document.getElementById('compare-insights');
-  ins.innerHTML='<strong>📊 Comparison</strong>';
-  ins.insertAdjacentHTML('beforeend','<div class="insight-item"><span>📏</span><div>A: <strong>'+sa+'%</strong> vs B: <strong>'+sb+'%</strong> ('+(sb>=sa?'+':'')+(sb-sa)+' pts)</div></div>');
-  ins.insertAdjacentHTML('beforeend','<div class="insight-item"><span>📝</span><div>Words: A=<strong>'+a.split(/\s+/).length+'</strong>, B=<strong>'+b.split(/\s+/).length+'</strong></div></div>');
-  for(var i=0;i<metrics.length;i++){
-    var va=metrics[i].check(a),vb=metrics[i].check(b);
-    if(vb>va)ins.insertAdjacentHTML('beforeend','<div class="insight-item"><span>📈</span><div><strong>'+metrics[i].name+'</strong>: '+va+' → '+vb+'</div></div>')
-  }
-  toast('Compared!');
-}
-
-// Templates
-var templates=[
-  {cat:'Code',title:'Code Review',prompt:'Review the following code for bugs, performance issues, and best practices violations. Provide specific line-by-line feedback.',uses:'2.4k',rating:'4.8'},
-  {cat:'Code',title:'API Generator',prompt:'Generate a REST API endpoint for [resource] with CRUD operations. Include input validation, error handling, and clear documentation.',uses:'1.8k',rating:'4.7'},
-  {cat:'Code',title:'Unit Test Writer',prompt:'Write comprehensive unit tests for the following function. Cover edge cases, error conditions, and happy path with clear assertions.',uses:'3.1k',rating:'4.9'},
-  {cat:'Code',title:'SQL Optimizer',prompt:'Analyze and optimize the following SQL query. Explain each optimization and provide the improved version with benchmarks.',uses:'1.2k',rating:'4.6'},
-  {cat:'Code',title:'Regex Builder',prompt:'Write a regex pattern that matches [description]. Explain each component of the pattern and provide test cases.',uses:'980',rating:'4.5'},
-  {cat:'Writing',title:'Blog Outline',prompt:'Create a detailed blog post outline about [topic]. Include compelling H1 title, introduction hook, 5-7 sections, and a conclusion with CTA.',uses:'4.2k',rating:'4.8'},
-  {cat:'Writing',title:'Email Composer',prompt:'Write a professional email about [subject]. Specify desired tone, include clear subject line, greeting, body with key points, and closing.',uses:'5.6k',rating:'4.5'},
-  {cat:'Writing',title:'Product Description',prompt:'Write a compelling product description for [product]. Highlight 3-5 key features, include social proof, and end with a strong CTA.',uses:'2.9k',rating:'4.7'},
-  {cat:'Writing',title:'Landing Page Copy',prompt:'Write landing page copy for [product/service]. Include hero headline, value propositions, features section, testimonials, and CTA.',uses:'1.7k',rating:'4.6'},
-  {cat:'Analysis',title:'SWOT Analysis',prompt:'Conduct a SWOT analysis for [company/product]. Analyze strengths, weaknesses, opportunities, and threats with specific examples.',uses:'1.5k',rating:'4.4'},
-  {cat:'Analysis',title:'Data Insights',prompt:'Analyze the following data and extract 5-7 key insights. Present findings with visual descriptions and actionable business recommendations.',uses:'980',rating:'4.6'},
-  {cat:'Analysis',title:'Competitor Analysis',prompt:'Analyze [competitor]. Compare their product, pricing, marketing, strengths and weaknesses. Identify gaps and opportunities.',uses:'720',rating:'4.3'},
-  {cat:'Creative',title:'Story Generator',prompt:'Write a [genre] story about [theme]. Include vivid sensory details, compelling characters, and an engaging plot. ~500 words.',uses:'3.3k',rating:'4.8'},
-  {cat:'Creative',title:'Brainstorming',prompt:'Generate 20 creative ideas for [topic]. Include unconventional approaches. Rate feasibility (1-5) and provide one-line descriptions.',uses:'2.1k',rating:'4.7'},
-  {cat:'Creative',title:'Name Generator',prompt:'Generate 30 name ideas for [product/brand/character]. Group by style (modern, classic, abstract). Explain the reasoning behind top picks.',uses:'1.4k',rating:'4.5'},
-  {cat:'Business',title:'Market Research',prompt:'Conduct market analysis for [industry]. Identify trends, major competitors, target demographics, and growth opportunities with data.',uses:'1.1k',rating:'4.5'},
-  {cat:'Business',title:'Pitch Deck Outline',prompt:'Create a pitch deck outline for [startup]. Include problem, solution, market size, business model, traction, team, and ask.',uses:'890',rating:'4.3'},
-  {cat:'Education',title:'Lesson Plan',prompt:'Create a lesson plan for [subject], targeting [level]. Include objectives, materials, activities (with timing), assessment, and homework.',uses:'1.6k',rating:'4.6'},
-  {cat:'Education',title:'Study Guide',prompt:'Create a study guide for [topic]. Include key concepts, definitions, formulas, practice questions with answers, and summary.',uses:'1.1k',rating:'4.4'},
-  {cat:'Education',title:'Explainer',prompt:'Explain [complex topic] to a [beginner/intermediate/advanced] audience. Use analogies, concrete examples, and avoid jargon without explanation.',uses:'2.3k',rating:'4.7'}
-];
+  {id:'clr',name:'Clarity',check:function(p){return(p.match(/specific|exactly|precisely|step.by.step|detailed/gi)||[]).length>=1?100:40}},
+  {id:'role',name:'Role',check:function(p){return p.match(/you are|act as|expert|specialist|professional/gi)?100:p.match(/help|assist/gi)?50:10}},
+  {id:'ctx',name:'Context',check:function(p){return p.split(/[.!?]+/).filter(Boolean).length>=2?100:45}},
+  {id:'fmt',name:'Structure',check:function(p){return p.match(/format|output.*as|return.*as|json|markdown|table|bullet|list|code.block|type.hint|docstring/gi)?100:30}},
+  {id:'cstr',name:'Boundaries',check:function(p){return p.match(/do not|don.t|avoid|never|only|must|should|required/gi)?100:p.match(/robust|handle|catch|error/gi)?40:10}},
+  {id:'tone',name:'Tone',check:function(p){return p.match(/tone|voice|formal|casual|professional|friendly|concise/gi)?100:20}},
+  {id:'act',name:'Actionable',check:function(p){return(p.match(/write|create|generate|build|implement|design|analyze/gi)||[]).length>=1?100:30}}
+]
 
 var activeFilter='All';
 var cats=['All'].concat([...new Set(templates.map(function(t){return t.cat}))]);
