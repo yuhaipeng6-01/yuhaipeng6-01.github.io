@@ -86,6 +86,54 @@ textarea{min-height:110px}select{cursor:pointer}
 @keyframes spin{to{transform:rotate(360deg)}}
 footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid var(--border);margin-top:2rem;font-size:0.85rem}
 @media(max-width:768px){.hero h1{font-size:2rem}.compare-grid{grid-template-columns:1fr}}
+/* === V2 Scoring UI === */
+.tier-badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 1.2rem;border-radius:2rem;font-weight:700;font-size:1.1rem;margin:0.5rem 0}
+.tier-badge.t-Excellent{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+.tier-badge.t-Good{background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3)}
+.tier-badge.t-Fair{background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
+.tier-badge.t-Needs-Work{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.tier-badge.t-Poor{background:rgba(220,38,38,0.15);color:#dc2626;border:1px solid rgba(220,38,38,0.3)}
+.score-gauge{position:relative;width:140px;height:140px;margin:0.5rem auto}
+.score-gauge svg{transform:rotate(-90deg)}
+.score-gauge .bg{fill:none;stroke:var(--border);stroke-width:8}
+.score-gauge .fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.score-gauge .value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:800}
+.cat-bars{display:flex;flex-direction:column;gap:0.45rem;margin-top:1rem}
+.cat-bar-row{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem}
+.cat-bar-label{width:95px;text-align:right;color:var(--muted);flex-shrink:0}
+.cat-bar-track{flex:1;height:20px;background:var(--bg);border-radius:10px;overflow:hidden;position:relative}
+.cat-bar-fill{height:100%;border-radius:10px;transition:width 0.6s ease;min-width:2px}
+.cat-bar-val{width:40px;font-weight:700;font-size:0.78rem;flex-shrink:0}
+.factor-table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.74rem}
+.factor-table th{text-align:left;padding:0.35rem 0.5rem;color:var(--muted);border-bottom:1px solid var(--border);font-weight:600}
+.factor-table td{padding:0.35rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.factor-table tr:hover td{background:rgba(255,255,255,0.02)}
+.factor-score{font-weight:700;text-align:center;width:42px}
+.factor-score.high{color:#10b981}.factor-score.mid{color:#f59e0b}.factor-score.low{color:#ef4444}
+.diag-list{display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem}
+.diag-item{display:flex;gap:0.6rem;padding:0.55rem 0.75rem;border-radius:8px;font-size:0.78rem;align-items:flex-start}
+.diag-item.critical{background:rgba(239,68,68,0.07);border-left:3px solid #ef4444}
+.diag-item.warning{background:rgba(245,158,11,0.07);border-left:3px solid #f59e0b}
+.diag-item.info{background:rgba(59,130,246,0.05);border-left:3px solid #3b82f6}
+.diag-sev{font-weight:700;flex-shrink:0;font-size:0.68rem;text-transform:uppercase;min-width:48px}
+.diag-item.critical .diag-sev{color:#ef4444}
+.diag-item.warning .diag-sev{color:#f59e0b}
+.diag-item.info .diag-sev{color:#3b82f6}
+.diag-body{flex:1;color:var(--muted)}.diag-body strong{color:var(--text)}
+.optimize-strategies{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem}
+.strat-chip{padding:0.3rem 0.8rem;border-radius:2rem;font-size:0.72rem;background:var(--bg);border:1px solid var(--border);color:var(--muted)}
+.strat-chip.applied{background:var(--accent);color:#fff;border-color:var(--accent)}
+.diff-view{font-family:"Cascadia Code","Fira Code",monospace;font-size:0.76rem;line-height:1.6;white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:0.8rem;max-height:400px;overflow-y:auto}
+.diff-add{background:rgba(16,185,129,0.08)}
+.diff-rem{background:rgba(239,68,68,0.06);text-decoration:line-through;opacity:0.6}
+.score-breakdown-toggle{display:flex;gap:0.5rem;margin-bottom:0.8rem}
+.sb-btn{padding:0.35rem 0.9rem;border-radius:6px;font-size:0.75rem;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);transition:all 0.2s}
+.sb-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin:0.6rem 0;font-size:0.73rem;color:var(--muted);justify-content:center}
+.meta-row span{display:inline-flex;align-items:center;gap:0.3rem}
+@keyframes scorePulse{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
+.score-gauge .value.pulse{animation:scorePulse 0.4s ease}
+.v2-section-title{font-size:0.82rem;font-weight:700;color:var(--muted);margin:1.2rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.05em}
 </style>
 </head>
 <body>
@@ -126,19 +174,38 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
   <div class="card">
     <div class="input-group">
       <label>Your Prompt</label>
-      <textarea id="analyzer-input" placeholder="Paste your AI prompt here...&#10;&#10;Example: You are an expert Python developer. Write a function that sorts a list of dictionaries by key 'age', handling None values gracefully. Include type hints and error handling. Output the code in a single code block."></textarea>
+      <textarea id="analyzer-input" placeholder="Paste your AI prompt here...
+
+Example: You are an expert Python developer with 10 years of experience. Write a function that sorts a list of dictionaries by key 'age', handling None and missing keys gracefully. Include type hints, docstring, and error handling. Output ONLY the code in a markdown code block."></textarea>
     </div>
-    <button class="btn btn-primary" onclick="analyzePrompt()" style="font-size:1rem;padding:0.6rem 2rem">🔬 Analyze Quality</button>
+    <button class="btn btn-primary" onclick="analyzePromptV2()" style="font-size:1rem;padding:0.6rem 2rem">Deep Analyze (21 Factors)</button>
     <div id="analyzer-results" style="display:none;margin-top:1.5rem">
-      <div class="overall-score"><div class="score-circle" id="score-circle">--</div><p style="margin-top:0.4rem;color:var(--muted);font-size:0.82rem">Overall Score</p></div>
-      <div class="score-grid" id="score-grid"></div>
-      <div class="insights" id="insights"><strong>💡 Improvement Suggestions</strong></div>
+      <div style="text-align:center" id="tier-badge-container"></div>
+      <div class="score-gauge" id="score-gauge">
+        <svg viewBox="0 0 140 140" width="140" height="140">
+          <circle class="bg" cx="70" cy="70" r="60"/>
+          <circle class="fill" id="score-fill" cx="70" cy="70" r="60" stroke-dasharray="377" stroke-dashoffset="377"/>
+        </svg>
+        <div class="value" id="score-value">--</div>
+      </div>
+      <div class="meta-row" id="meta-row"></div>
+      <div class="v2-section-title">Category Breakdown</div>
+      <div class="cat-bars" id="cat-bars"></div>
+      <div class="score-breakdown-toggle" style="margin-top:1.2rem">
+        <button class="sb-btn active" id="btn-view-factors" onclick="showFactorsView()">Factor Details</button>
+        <button class="sb-btn" id="btn-view-diag" onclick="showDiagView()">Diagnostics (<span id="diag-count">0</span>)</button>
+      </div>
+      <div id="factors-view">
+        <table class="factor-table"><thead><tr><th>Factor</th><th>Score</th><th>Category</th><th>Guidance</th></tr></thead><tbody id="factor-tbody"></tbody></table>
+      </div>
+      <div id="diag-view" style="display:none">
+        <div class="diag-list" id="diag-list"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- TAB 2: Optimizer -->
-<div class="tab-panel" id="panel-optimizer">
+<!-- TAB 2: Optimizer --><div class="tab-panel" id="panel-optimizer">
   <div class="card">
     <div class="input-group">
       <label>Your Prompt</label>
@@ -155,23 +222,30 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
         <option value="creative">Creative Writing</option>
       </select>
     </div>
-    <button class="btn btn-primary" onclick="optimizePrompt()" style="font-size:1rem;padding:0.6rem 2rem">✨ Optimize Prompt</button>
+    <button class="btn btn-primary" onclick="optimizePromptV2()" style="font-size:1rem;padding:0.6rem 2rem">Optimize (Multi-Strategy)</button>
     <div id="optimizer-results" style="display:none;margin-top:1.5rem">
-      <div class="compare-grid">
-        <div class="compare-col"><div class="compare-label">📝 Original</div><div id="orig-prompt" style="font-size:0.82rem;white-space:pre-wrap"></div></div>
-        <div class="compare-col"><div class="compare-label">✨ Optimized <span style="background:rgba(16,185,129,0.2);padding:0.1rem 0.3rem;border-radius:0.15rem">NEW</span></div><div id="opt-prompt" style="font-size:0.82rem;white-space:pre-wrap"></div></div>
+      <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;margin-bottom:0.8rem">
+        <span style="font-weight:700;font-size:0.9rem">Score:</span>
+        <span id="opt-score-before" style="padding:0.25rem 0.7rem;border-radius:12px;font-weight:700;font-size:0.82rem;background:var(--bg);border:1px solid var(--border)">Before: --</span>
+        <span style="color:var(--accent2);font-size:1.1rem">&rarr;</span>
+        <span id="opt-score-after" style="padding:0.25rem 0.7rem;border-radius:12px;font-weight:700;font-size:0.82rem;background:var(--bg);border:1px solid var(--border)">After: --</span>
+        <span id="opt-improvement" style="color:#10b981;font-weight:700;font-size:0.85rem"></span>
       </div>
-      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('opt-prompt').textContent)">📋 Copy Result</button>
-        <button class="btn btn-outline" onclick="switchTab('compare');document.getElementById('compare-a').value=document.getElementById('orig-prompt').textContent;document.getElementById('compare-b').value=document.getElementById('opt-prompt').textContent;comparePrompts()">🔄 Diff View</button>
-        <button class="btn btn-outline" onclick="document.getElementById('analyzer-input').value=document.getElementById('opt-prompt').textContent;switchTab('analyzer')">🔬 Re-Analyze</button>
+      <div class="v2-section-title">Applied Strategies</div>
+      <div class="optimize-strategies" id="opt-strategies"></div>
+      <div class="compare-grid">
+        <div class="compare-col"><div class="compare-label">Original</div><div id="orig-prompt" class="diff-view"></div></div>
+        <div class="compare-col"><div class="compare-label">Optimized</div><div id="opt-prompt" class="diff-view"></div></div>
+      </div>
+      <div style="margin-top:0.8rem;display:flex;gap:0.5rem">
+        <button class="btn btn-outline" onclick="copyToClipboard(document.getElementById('opt-prompt').textContent)">Copy Optimized</button>
+        <button class="btn btn-outline" onclick="document.getElementById('analyzer-input').value=document.getElementById('opt-prompt').textContent;switchTab('analyzer');analyzePromptV2()">Score in Analyzer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TAB 3: Compare -->
-<div class="tab-panel" id="panel-compare">
+<!-- TAB 3: Compare -->iv class="tab-panel" id="panel-compare">
   <div class="card">
     <div class="compare-grid">
       <div><div class="input-group"><label>Prompt A</label><textarea id="compare-a" placeholder="Original..."></textarea></div></div>
@@ -307,18 +381,378 @@ function switchTab(tab){
   if(tab==='templates')renderTemplates()
 }
 
-// 8-dimension scoring engine
-var metrics=[
-  {id:'len',name:'Length',check:function(p){var w=p.split(/\s+/).length;return w>=25?100:w>=15?75:w>=8?50:15}},
-  {id:'clr',name:'Clarity',check:function(p){return(p.match(/specific|exactly|precisely|step.by.step|detailed/gi)||[]).length>=1?100:40}},
-  {id:'role',name:'Role',check:function(p){return p.match(/you are|act as|expert|specialist|professional/gi)?100:p.match(/help|assist/gi)?50:10}},
-  {id:'ctx',name:'Context',check:function(p){return p.split(/[.!?]+/).filter(Boolean).length>=2?100:45}},
-  {id:'fmt',name:'Structure',check:function(p){return p.match(/format|output.*as|return.*as|json|markdown|table|bullet|list|code.block|type.hint|docstring/gi)?100:30}},
-  {id:'cstr',name:'Boundaries',check:function(p){return p.match(/do not|don.t|avoid|never|only|must|should|required/gi)?100:p.match(/robust|handle|catch|error/gi)?40:10}},
-  {id:'tone',name:'Tone',check:function(p){return p.match(/tone|voice|formal|casual|professional|friendly|concise/gi)?100:20}},
-  {id:'act',name:'Actionable',check:function(p){return(p.match(/write|create|generate|build|implement|design|analyze/gi)||[]).length>=1?100:30}}
-]
+var PF=PF||{};
+PF.catDefs={Foundation:{weight:20,color:"#6366f1"},Structure:{weight:22,color:"#8b5cf6"},Precision:{weight:25,color:"#3b82f6"},Context:{weight:15,color:"#06b6d4"},Robustness:{weight:10,color:"#10b981"},Enhancement:{weight:8,color:"#f59e0b"}};
 
+PF.scoreV2=function(p){
+p=(p||"").trim();
+if(!p)return{score:0,tier:"Empty",tierColor:"#6b6b80",tierEmoji:"📭",tierCSS:"",factors:[],diagnostics:[],categoryBreakdown:{},taskType:"none",wordCount:0,sentenceCount:0,paragraphCount:0,avgSentenceLen:0,antiPatterns:[]};
+var w=p.split(/\s+/),wc=w.length;
+var s=p.split(/[.!?]+/).filter(function(x){return x.trim().length>0}),sc=s.length||1;
+var pg=p.split(/\n\n+/).filter(function(x){return x.trim().length>0}),pc=pg.length||1;
+var asl=Math.round(wc/sc),pl=p.toLowerCase();
+var factors=[];
+function A(c,i,n,s,w,d){factors.push({cat:c,id:i,name:n,score:Math.min(100,Math.max(0,Math.round(s))),weight:w,detail:d||""})}
+
+var ls=wc>=60?100:wc>=40?90:wc>=25?75:wc>=15?55:wc>=8?30:10;
+A("Foundation","F1","Length",ls,6,wc<15?"Too short. Aim 25+ words.":"Good length.");
+var lo=s.filter(function(x){return x.split(/\s+/).length>15}).length;
+var shN=s.filter(function(x){return x.split(/\s+/).length<6}).length;
+var vs=(sc>=5&&lo>0&&shN>0)?100:(sc>=5&&(lo>0||shN>0))?80:sc>=3?60:30;
+A("Foundation","F2","Sentence Variety",vs,4,sc<3?"Break into more sentences.":"Good variety.");
+var av=(p.match(/\b(write|create|generate|build|implement|design|develop|code|craft|produce|compose|construct|make|do|perform|execute|run|test|check|verify|validate|review|audit|inspect|examine|analyze|assess|evaluate|measure|compare|contrast|summarize|explain|describe|define|identify|list|name|state|outline|translate|convert|transform|parse|extract|format|sort|filter|group|merge|split|join|count|calculate|compute|debug|fix|resolve|optimize|refactor|deploy|configure|install|setup|initialize|compile|render|display|show|output|return|respond|answer|provide|deliver|solve|determine|find|search|lookup|query)\b/gi)||[]).length;
+var dn=(av/Math.max(1,wc))*100;
+var ds=wc<10?50:dn>5?100:dn>3.5?85:dn>2.5?70:dn>1.5?50:20;
+A("Foundation","F3","Instruction Density",ds,5,dn<1.5?"Add action verbs.":"Good directive density.");
+var ho=/^(you are|act as|role:|i need|i want|please|can you|help|create|write|generate|build)/i.test(p);
+var hc=/(thank|please|let me know|make sure|ensure|confirm|verify)/i.test(p.slice(-150));
+var cs=(ho&&hc&&pc>=3)?100:(ho&&hc)?85:(ho&&pc>=2)?70:ho?50:25;
+A("Foundation","F4","Structural Completeness",cs,5,!ho?"Start with a clear role.":"Good structure.");
+
+// Structure
+var rs=0;
+if(/^you are an? ([\w\s\-,]+?)(?:\.|\n|with|who|specializing)/i.test(p))rs=100;
+else if(/^act as (?:an? )?([\w\s\-,]+?)(?:\.|\n)/i.test(p))rs=95;
+else if(/role:\s*(.+?)(?:\.|\n)/i.test(p))rs=90;
+else if(/as (?:a|an) ([\w\s\-,]+?),?\s*(?:you|please|I)/i.test(p))rs=70;
+else if(/(you are|act as)/i.test(p))rs=60;
+if(rs>0&&/\b(expert|senior|professional|experienced|skilled|specialist|veteran|master|advanced)\b/i.test(p))rs=Math.min(100,rs+10);
+if(rs===0&&!/\b(help|assist|support|guide)\b/i.test(p))rs=5;
+A("Structure","F5","Role Definition",rs,7,rs<50?"Define an expert role.":rs<80?"Add expertise level.":"Well-defined role.");
+
+var ns=(p.match(/\n\s*\d+[\.\)]\s/g)||[]).length;
+var bs=(p.match(/\n\s*[-*•]\s/g)||[]).length;
+var sw=(p.match(/\b(first|second|third|finally|next|then|after|before|step \d|stage \d|phase \d)\b/gi)||[]).length;
+var ds2=ns>=4?100:ns>=2||bs>=4?85:ns>=1||bs>=2?65:sw>=3?55:sw>=1?35:10;
+A("Structure","F6","Task Decomposition",ds2,6,ds2<35?"Break into numbered steps.":"Well-decomposed.");
+
+var fp=(p.match(/\b(if|when|then|therefore|thus|hence|consequently|as a result|because|since|due to|so that|in order to)\b/gi)||[]).length;
+var fs=fp>=5?100:fp>=3?80:fp>=1?50:20;
+A("Structure","F7","Logical Flow",fs,5,fp<1?"Add conditional logic (if/when/then).":"Strong flow.");
+
+var pw=(p.match(/\b(critical|crucial|essential|important|vital|key|priority|must|required|mandatory|imperative|paramount|above all|most importantly|first and foremost)\b/gi)||[]).length;
+var em=(p.match(/\*[\s\S]+?\*|`[^`]+`|"[^"]+"/g)||[]).length;
+var ps=(pw>=2&&em>=2)?100:(pw>=1||em>=3)?75:em>=1?45:15;
+A("Structure","F8","Priority Signaling",ps,4,pw<1?"Mark critical items with emphasis.":"Good priority signals.");
+
+// Precision
+var fe=(p.match(/(?:output|return|respond|reply|answer|produce|deliver|generate|format).{0,40}?(?:as|in|with|using).{0,20}?(?:json|markdown|html|xml|yaml|csv|table|bullet|list|code|paragraph|essay|report|script|function|class|module)/gi)||[]).length;
+var fm=(p.match(/\b(json|markdown|html|xml|yaml|csv|table|bullet points?|numbered list|code block|paragraph|essay|report)\b/gi)||[]).length;
+var fms=fe>=2?100:fe>=1?85:fm>=2?65:fm>=1?45:10;
+A("Precision","F9","Output Format",fms,7,fe<1?"Specify output format.":"Well-specified format.");
+
+var hcN=(p.match(/\b(must not|must|required|mandatory|essential|crucial|critical|non.negotiable|strictly|absolutely|always|never|do not|cannot|should not|prohibited|forbidden|banned)\b/gi)||[]).length;
+var scN=(p.match(/\b(should|preferably|ideally|if possible|try to|aim to|consider|recommend|suggest|advise|optionally|feel free)\b/gi)||[]).length;
+var csN=(hcN>=3&&scN>=2)?100:(hcN>=2)?80:(hcN>=1||scN>=3)?60:scN>=1?35:8;
+A("Precision","F10","Constraint Quality",csN,7,hcN<1?"Add hard constraints (must/must not).":"Good constraint balance.");
+
+var es=(p.match(/(?:example|e\.g\.|for instance|sample|like this|such as|here is|demo|illustration).{0,200}/gi)||[]);
+var hcd=/```[\s\S]*?```|`[^`]{10,}`/.test(p);
+var hse=/\b(input|output|before|after)\s*:/i.test(p);
+var exs=(hse&&es.length>=2)?100:(hcd&&es.length>=1)?85:es.length>=2?75:es.length>=1?55:/example|e\.g\./i.test(p)?35:12;
+A("Precision","F11","Example Quality",exs,6,es.length<1?"Add concrete examples.":"Strong examples.");
+
+var cd=(p.match(/\b(\d+)\s*(words|characters|paragraphs|sentences|lines|pages|tokens|items|results|entries|rows|columns|minutes|seconds|hours|days|steps|stages|levels|layers|chapters|sections|versions?|degrees?|percent|percentage|px|em|rem|kb|mb|gb|api|calls?|requests?)\b/gi)||[]).length;
+var vw=(p.match(/\b(some|few|several|many|various|different|stuff|things|whatever|something|anything|maybe|perhaps|possibly|probably|kind of|sort of|a little|somewhat|vaguely|roughly|approximately|about|around|more or less|generally|usually|typically|normally|often|sometimes|occasionally|rarely)\b/gi)||[]).length;
+var sps=Math.max(5,Math.min(100,25+cd*8-Math.min(30,vw*3)));
+A("Precision","F12","Specificity",sps,5,cd<2?"Replace vague terms with numbers.":"Good specificity.");
+
+// Context
+var cp=(p.match(/\b(because|since|given that|assuming|considering|in the context of|regarding|concerning|about|related to|pertaining to|based on|according to|with respect to|in light of|due to|as per)\b/gi)||[]).length;
+var ctx=cp>=4?100:cp>=2?75:cp>=1?50:18;
+A("Context","F13","Background Context",ctx,5,cp<1?"Add context: why and what matters.":"Good context.");
+
+var doms=["python","javascript","typescript","react","vue","angular","node","next","nuxt","api","rest","graphql","database","sql","nosql","postgres","mongodb","redis","aws","azure","gcp","docker","kubernetes","terraform","frontend","backend","fullstack","devops","ml","ai","llm","nlp","data science","analytics","blockchain","web3","crypto","security","mobile","ios","android","desktop","embedded","iot","healthcare","finance","education","gaming","ecommerce","marketing","linux","windows","macos","git","github","vscode"];
+var dh=0;for(var di=0;di<doms.length;di++){if(pl.indexOf(doms[di])!==-1)dh++;}
+var dms=dh>=4?100:dh>=3?90:dh>=2?75:dh>=1?55:20;
+A("Context","F14","Domain Specificity",dms,5,dh<1?"Specify domain/tech stack.":"Strong domain grounding.");
+
+var lw=(p.match(/\b(beginner|novice|junior|intermediate|advanced|expert|senior|technical|non.technical|layperson|specialist|generalist)\b/gi)||[]).length;
+var aus=lw>=2?70:lw>=1?45:12;
+A("Context","F15","Audience Targeting",aus,5,lw<1?"Specify target audience level.":"Good targeting.");
+
+// Robustness
+var et=(p.match(/\b(error|exception|edge case|corner case|failure|invalid|null|undefined|empty|missing|wrong|incorrect|unexpected|fallback|default|graceful|robust|safe|reliable|handle|catch|recover|retry|timeout|overflow|underflow)\b/gi)||[]).length;
+var ers=et>=5?100:et>=3?75:et>=1?45:10;
+A("Robustness","F16","Error Handling",ers,4,et<1?"Address potential errors.":"Good error awareness.");
+
+var fw=(p.match(/\b(just|really|very|quite|actually|basically|literally|honestly|frankly|essentially|truly|simply|merely|only|almost)\b/gi)||[]).length;
+var cls=Math.max(5,Math.min(100,95-fw));
+A("Robustness","F17","Clarity",cls,3,fw>4?"Cut filler words (just, really).":"Clear language.");
+
+var st=(p.match(/\b(do not|never|avoid|refrain|prohibit|forbidden|banned|unsafe|harmful|toxic|bias|unfair|discriminat|inappropriate|offensive|illegal|unethical|dangerous|malicious)\b/gi)||[]).length;
+var sfs=st>=3?100:st>=1?65:25;
+A("Robustness","F18","Safety Guardrails",sfs,3,st>=1?"Safety constraints present.":"Consider safety if applicable.");
+
+// Enhancement
+var ct=(p.match(/\b(think step by step|reason through|explain your reasoning|show your work|walk me through|step.by.step|chain.of.thought|first.*then.*finally|break.*down|analyze.*step|consider.*carefully)\b/gi)||[]).length;
+var cts=ct>=2?100:ct>=1?70:10;
+A("Enhancement","F19","Chain-of-Thought",cts,3,ct<1?"Add reasoning directive.":"Good CoT usage.");
+
+var it=(p.match(/\b(iterate|refine|improve|revise|polish|enhance|optimize|adjust|tweak|update|modify|rewrite|rephrase|restructure|reorganize|redo)\b/gi)||[]).length;
+var its=it>=2?100:it>=1?65:15;
+A("Enhancement","F20","Iteration Readiness",its,2,it<1?"Build in iteration for refinement.":"Good iteration signaling.");
+
+var cr=(p.match(/\b(concise|brief|short|succinct|terse|compact|minimal|summarize|tl;dr|to the point|no fluff|get to the point|skip the preamble|directly|straight to)\b/gi)||[]).length;
+var ta=(p.match(/\b(use \d+ tokens|limit to \d+ words|keep it under|maximum \d+|at most \d+|no more than \d+|budget|efficient)\b/gi)||[]).length;
+var tks=ta>=1?100:cr>=2?75:cr>=1?50:20;
+A("Enhancement","F21","Token Efficiency",tks,3,ta<1&&cr<1?"Set token/word limits.":"Good token awareness.");
+
+// Anti-patterns
+var ap=[];
+var fl=p.split(/\n/)[0].trim();
+if(/^(can you|please|could you|would you|i want you to|help me with)\s*$/i.test(fl))ap.push({severity:"warning",text:"Vague opening. Start with a specific role or task."});
+if(/^(can you|could you|would you|is it possible|do you know)\b/i.test(p)&&wc>20)ap.push({severity:"info",text:"Complex task framed as yes/no. Use imperative mood for better results."});
+if(wc>100&&pc===1)ap.push({severity:"warning",text:"Wall of text detected. Break into logical sections with blank lines."});
+if(wc>50&&!/[.!?]/.test(p))ap.push({severity:"critical",text:"No sentence punctuation in a long prompt. Add periods and question marks."});
+if(asl>40&&sc>1)ap.push({severity:"warning",text:"Very long sentences (avg "+asl+"w). Break them up for better parsing."});
+
+// Task type detection
+var tt="general";
+if(/\b(code|function|class|script|program|app|api|endpoint|route|component|hook|middleware|database|query|sql|algorithm|bug|debug|compile|deploy|test case|unit test)\b|```|npm|pip|git|github/i.test(p))tt="code";
+else if(/\b(story|poem|song|lyrics|narrative|fiction|fantasy|character|plot|dialogue|creative|imagine|scene|setting|worldbuilding|backstory)\b/i.test(p))tt="creative";
+else if(/\b(analyze|analysis|evaluate|assess|review|audit|compare|contrast|benchmark|metric|kpi|performance|trend|pattern|insight|finding|conclusion|report on|study)\b/i.test(p))tt="analysis";
+else if(/\b(translate|translation|localize|i18n|l10n|language|english|chinese|spanish|french|german|japanese|korean)\b/i.test(p))tt="translation";
+else if(/\b(summarize|summary|tl;dr|brief|condense|synthesis|overview|recap|digest|key points|main points|abstract)\b/i.test(p))tt="summarization";
+
+// Compute weighted score
+var tw=0,wSum=0;
+var cS={},cW={};
+for(var i=0;i<factors.length;i++){var f=factors[i];wSum+=f.score*f.weight;tw+=f.weight;if(!cS[f.cat]){cS[f.cat]=0;cW[f.cat]=0}cS[f.cat]+=f.score*f.weight;cW[f.cat]+=f.weight;}
+var fin=Math.round(wSum/tw);
+var cb={};for(var cat in cS){cb[cat]=Math.round(cS[cat]/cW[cat]);}
+
+// Tier classification
+var tier,tc,te,tcs;
+if(fin>=80){tier="Excellent";tc="#10b981";te="🏆";tcs="t-Excellent"}
+else if(fin>=65){tier="Good";tc="#3b82f6";te="👍";tcs="t-Good"}
+else if(fin>=50){tier="Fair";tc="#f59e0b";te="🔧";tcs="t-Fair"}
+else if(fin>=30){tier="Needs Work";tc="#ef4444";te="⚠️";tcs="t-Needs-Work"}
+else{tier="Poor";tc="#dc2626";te="❌";tcs="t-Poor"}
+
+// Build diagnostics
+var dg=[];
+for(var i=0;i<factors.length;i++){var f=factors[i];if(f.score<35)dg.push({severity:"critical",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});else if(f.score<55)dg.push({severity:"warning",factor:f.name,cat:f.cat,advice:f.detail,id:f.id});}
+for(var ai=0;ai<ap.length;ai++){dg.push({severity:ap[ai].severity,factor:"Anti-Pattern",cat:"Global",advice:ap[ai].text,id:"AP"+ai});}
+dg.sort(function(a,b){var o={critical:0,warning:1,info:2};return(o[a.severity]||3)-(o[b.severity]||3);});
+
+// Return result
+return{score:fin,tier:tier,tierColor:tc,tierEmoji:te,tierCSS:tcs,factors:factors,categoryBreakdown:cb,diagnostics:dg,antiPatterns:ap,taskType:tt,wordCount:wc,sentenceCount:sc,paragraphCount:pc,avgSentenceLen:asl};
+};
+
+// ═══ V2 UI FUNCTIONS ════════════════════════════════
+
+var lastScoreResult=null;
+function analyzePromptV2(){
+  var p=document.getElementById("analyzer-input").value.trim();
+  if(!p){toast("Enter a prompt to analyze");return}
+  var result=PF.scoreV2(p);
+  lastScoreResult=result;
+  document.getElementById("analyzer-results").style.display="block";
+
+  // Tier badge
+  var tc=document.getElementById("tier-badge-container");
+  tc.innerHTML='<span class="tier-badge "+result.tierCSS+"">"+result.tierEmoji+" "+result.tier+" ("+result.score+"%)</span>';
+
+  // Score gauge
+  var gauge=document.getElementById("score-fill");
+  var circum=377;
+  var offset=circum-(result.score/100)*circum;
+  gauge.setAttribute("stroke-dashoffset",offset);
+  gauge.setAttribute("stroke",result.tierColor);
+  var sv=document.getElementById("score-value");
+  sv.textContent=result.score+"%";
+  sv.className="value pulse";
+  setTimeout(function(){sv.className="value"},500);
+
+  // Meta row
+  var mr=document.getElementById("meta-row");
+  mr.innerHTML="<span>Words: "+result.wordCount+"</span><span>Sentences: "+result.sentenceCount+"</span><span>Paragraphs: "+result.paragraphCount+"</span><span>Task: "+result.taskType.charAt(0).toUpperCase()+result.taskType.slice(1)+"</span><span>Avg Sentence: "+result.avgSentenceLen+"w</span>";
+
+  // Category bars
+  var cb=document.getElementById("cat-bars");
+  var catDefs=PF.catDefs;
+  var barHTML="";
+  for(var cat in catDefs){
+    var s=result.categoryBreakdown[cat]||0;
+    var cd=catDefs[cat];
+    barHTML+='<div class="cat-bar-row"><div class="cat-bar-label">'+cat+'</div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:'+s+'%;background:'+cd.color+'"></div></div><div class="cat-bar-val" style="color:'+cd.color+'">'+s+'%</div></div>';
+  }
+  cb.innerHTML=barHTML;
+
+  // Factor table
+  var ft=document.getElementById("factor-tbody");
+  var ftHTML="";
+  for(var i=0;i<result.factors.length;i++){
+    var f=result.factors[i];
+    var cls=f.score>=70?"high":f.score>=40?"mid":"low";
+    ftHTML+="<tr><td>"+f.name+"</td><td class=\"factor-score "+cls+"\">"+f.score+"</td><td style=\"color:var(--muted)\">"+f.cat+"</td><td style=\"color:var(--muted);font-size:0.72rem\">"+f.detail+"</td></tr>";
+  }
+  ft.innerHTML=ftHTML;
+
+  // Diagnostics
+  var dc=document.getElementById("diag-count");
+  dc.textContent=result.diagnostics.length;
+  var dl=document.getElementById("diag-list");
+  var dlHTML="";
+  for(var i=0;i<result.diagnostics.length;i++){
+    var d=result.diagnostics[i];
+    var emoji=d.severity==="critical"?"🔴":d.severity==="warning"?"🟡":"🔵";
+    dlHTML+='<div class="diag-item '+d.severity+'"><div class="diag-sev">'+emoji+" "+d.severity+'</div><div class="diag-body"><strong>'+d.factor+'</strong> ('+d.cat+'): '+d.advice+'</div></div>';
+  }
+  dl.innerHTML=dlHTML;
+  showFactorsView();
+  toast("Score: "+result.score+"% | "+result.tier);
+}
+
+function showFactorsView(){
+  document.getElementById("factors-view").style.display="block";
+  document.getElementById("diag-view").style.display="none";
+  document.getElementById("btn-view-factors").classList.add("active");
+  document.getElementById("btn-view-diag").classList.remove("active");
+}
+function showDiagView(){
+  document.getElementById("factors-view").style.display="none";
+  document.getElementById("diag-view").style.display="block";
+  document.getElementById("btn-view-factors").classList.remove("active");
+  document.getElementById("btn-view-diag").classList.add("active");
+}
+
+// ═══ V2 OPTIMIZER ENGINE ═══════════════════════════
+
+PF.optimizeV2=function(prompt,model){
+  var p=(prompt||"").trim();
+  if(!p)return{optimized:"",strategies:[],scoreBefore:0,scoreAfter:0,improvement:0,tierBefore:"",tierAfter:""};
+  var beforeResult=PF.scoreV2(p);
+  var opt=p;
+  var strategies=[];
+
+  var modelRoles={
+    general:"You are a helpful, precise, and knowledgeable AI assistant.",
+    gpt4:"You are an expert AI assistant with deep technical knowledge and analytical precision.",
+    claude:"You are Claude, an analytical, thorough, and thoughtful AI assistant that excels at nuanced reasoning.",
+    gemini:"You are a knowledgeable, creative, and versatile AI assistant.",
+    code:"You are an expert software engineer with 15+ years of experience across multiple languages. Write production-grade, well-tested, well-documented code.",
+    creative:"You are a professional creative writer and storyteller with masterful command of narrative structure and prose."
+  };
+
+  // Strategy 1: Role injection
+  if(!/you are|act as|role:/i.test(opt)){
+    opt=(modelRoles[model]||modelRoles.general)+"\n\n"+opt;
+    strategies.push({name:"Role Injection",desc:"Added expert role definition"});
+  }
+
+  // Strategy 2: Output format
+  if(!/(?:output|return|respond|reply|answer|produce|deliver|generate|format).{0,40}?(?:as|in|with|using).{0,20}?(?:json|markdown|html|xml|yaml|csv|table|bullet|list|code|paragraph)/i.test(opt)){
+    var tt=beforeResult.taskType;
+    var fmtHint="";
+    if(tt==="code")fmtHint="\n\nOutput the code in a single markdown code block with language identifier.";
+    else if(tt==="analysis")fmtHint="\n\nStructure your analysis with: Executive Summary, Key Findings, Detailed Analysis, Recommendations.";
+    else if(tt==="creative")fmtHint="\n\nFormat your response with clear section breaks and appropriate narrative structure.";
+    else fmtHint="\n\nStructure your response with clear headings, bullet points for key information, and a summary section.";
+    opt+=fmtHint;
+    strategies.push({name:"Format Specification",desc:"Added output structure directives"});
+  }
+
+  // Strategy 3: Constraint injection
+  if(!/(?:must|required|mandatory|essential|crucial|critical|do not|never|should|preferably|ideally)/i.test(opt)){
+    var cHint="";
+    if(model==="code"||beforeResult.taskType==="code"){
+      cHint="\n\nImportant:\n- Include comprehensive error handling\n- Add clear comments and docstrings\n- Ensure type safety where applicable\n- Handle edge cases (null, empty, invalid inputs)";
+    }else if(model==="creative"||beforeResult.taskType==="creative"){
+      cHint="\n\nKey requirements:\n- Maintain consistent tone and voice\n- Ensure narrative coherence\n- Avoid cliches and generic descriptions";
+    }else{
+      cHint="\n\nKey requirements:\n- Be concise and actionable\n- Provide concrete examples where helpful\n- Avoid speculation. State confidence levels when uncertain";
+    }
+    opt+=cHint;
+    strategies.push({name:"Constraint Injection",desc:"Added quality guardrails"});
+  }
+
+  // Strategy 4: Chain-of-thought for complex tasks
+  var wc=p.split(/\s+/).length;
+  if(wc>30&&!/think step by step|explain your reasoning|show your work/i.test(opt)){
+    if(beforeResult.taskType==="analysis"||beforeResult.taskType==="code"||wc>60){
+      opt+="\n\nThink through this step by step before providing your final answer. Show your reasoning process.";
+      strategies.push({name:"Chain-of-Thought",desc:"Added reasoning directive"});
+    }
+  }
+
+  // Strategy 5: Decomposition for long/unstructured prompts
+  if(wc>40&&(beforeResult.categoryBreakdown["Structure"]||0)<50){
+    if(!/\n\s*\d+[\.\)]\s/.test(opt)){
+      var sections=opt.split(/\n\n+/);
+      if(sections.length>=2){
+        var newOpt=sections[0];
+        for(var i=1;i<sections.length;i++){newOpt+="\n\n"+i+". "+sections[i].trim();}
+        opt=newOpt;
+        strategies.push({name:"Task Decomposition",desc:"Restructured into numbered steps"});
+      }
+    }
+  }
+
+  // Strategy 6: Model-specific tuning
+  if(model==="claude"){
+    if(!/nuanced|thorough|detailed/i.test(opt)){
+      opt+="\n\nProvide a thorough, nuanced analysis. Consider multiple perspectives.";
+      strategies.push({name:"Claude Tuning",desc:"Optimized for analytical strengths"});
+    }
+  }else if(model==="gemini"){
+    if(!/creative|innovative|novel/i.test(opt)){
+      opt+="\n\nInclude creative and innovative approaches where applicable.";
+      strategies.push({name:"Gemini Tuning",desc:"Optimized for creative strengths"});
+    }
+  }else if(model==="code"){
+    if(!/test|verify|validate/i.test(opt)){
+      opt+="\n\nInclude test cases to verify correctness of the implementation.";
+      strategies.push({name:"Test Inclusion",desc:"Added verification/test directive"});
+    }
+  }
+
+  var afterResult=PF.scoreV2(opt);
+  return{
+    optimized:opt,original:p,
+    strategies:strategies,
+    scoreBefore:beforeResult.score,scoreAfter:afterResult.score,
+    improvement:afterResult.score-beforeResult.score,
+    tierBefore:beforeResult.tier,tierAfter:afterResult.tier
+  };
+};
+
+function optimizePromptV2(){
+  var p=document.getElementById("optimizer-input").value.trim();
+  if(!p){toast("Enter a prompt to optimize");return}
+  var model=document.getElementById("target-model").value;
+  var result=PF.optimizeV2(p,model);
+  document.getElementById("optimizer-results").style.display="block";
+
+  // Score display
+  var sb=document.getElementById("opt-score-before");
+  sb.textContent="Before: "+result.scoreBefore+"%";
+  sb.style.color=result.scoreBefore>=65?"#10b981":result.scoreBefore>=45?"#f59e0b":"#ef4444";
+  var sa=document.getElementById("opt-score-after");
+  sa.textContent="After: "+result.scoreAfter+"%";
+  sa.style.color=result.scoreAfter>=65?"#10b981":result.scoreAfter>=45?"#f59e0b":"#ef4444";
+  var imp=document.getElementById("opt-improvement");
+  if(result.improvement>0){imp.textContent="+"+result.improvement+"%";imp.style.color="#10b981";}
+  else if(result.improvement<0){imp.textContent=result.improvement+"%";imp.style.color="#ef4444";}
+  else{imp.textContent="no change";imp.style.color="var(--muted)";}
+
+  // Strategies
+  var ss=document.getElementById("opt-strategies");
+  ss.innerHTML=result.strategies.map(function(s){return '<span class="strat-chip applied" title="'+s.desc+'">'+s.name+'</span>';}).join("");
+
+  // Before/After
+  document.getElementById("orig-prompt").textContent=result.original;
+  var optEl=document.getElementById("opt-prompt");
+  var origWords=new Set(result.original.split(/\s+/).map(function(w){return w.toLowerCase().replace(/[^a-z0-9]/g,"")}));
+  var optWords=result.optimized.split(/\s+/);
+  var hl=optWords.map(function(w){var c=w.toLowerCase().replace(/[^a-z0-9]/g,"");if(c&&!origWords.has(c))return '<span class="diff-add">'+w+'</span>';return w;}).join(" ");
+  optEl.innerHTML=hl;
+  toast("Optimized: "+result.scoreBefore+"% \u2192 "+result.scoreAfter+"% ("+(result.improvement>0?"+":"")+result.improvement+"%)");
+}
+
+
+// 8-dimension scoring engine
 var activeFilter='All';
 var cats=['All'].concat([...new Set(templates.map(function(t){return t.cat}))]);
 
