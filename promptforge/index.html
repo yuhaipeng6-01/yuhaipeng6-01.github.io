@@ -201,16 +201,16 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
       <div style="font-size:2rem;font-weight:800;margin-bottom:0.3rem">$0</div>
       <div style="color:var(--muted);font-size:0.72rem;margin-bottom:1rem">Forever free</div>
       <ul style="list-style:none;text-align:left;font-size:0.78rem;line-height:2">
-        <li>✅ 21-Factor Deep Scoring</li>
-        <li>✅ 3 Optimization Strategies</li>
-        <li>✅ Top 5 Diagnostics</li>
-        <li>✅ Community Templates</li>
-        <li>✅ Basic Diff View</li>
-        <li style="color:var(--muted)">❌ Batch Scoring</li>
-        <li style="color:var(--muted)">❌ Score History</li>
-        <li style="color:var(--muted)">❌ Export Reports</li>
-        <li style="color:var(--muted)">❌ AI Rewrite</li>
-        <li style="color:var(--muted)">❌ Multi-Model</li>
+        <li>[V] 21-Factor Deep Scoring</li>
+        <li>[V] 3 Optimization Strategies</li>
+        <li>[V] Top 5 Diagnostics</li>
+        <li>[V] Community Templates</li>
+        <li>[V] Basic Diff View</li>
+        <li style="color:var(--muted)">[X] Batch Scoring</li>
+        <li style="color:var(--muted)">[X] Score History</li>
+        <li style="color:var(--muted)">[X] Export Reports</li>
+        <li style="color:var(--muted)">[X] AI Rewrite</li>
+        <li style="color:var(--muted)">[X] Multi-Model</li>
       </ul>
     </div>
     <!-- Pro Card -->
@@ -220,15 +220,15 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
       <div style="font-size:2rem;font-weight:800;margin-bottom:0.3rem">$5<span style="font-size:0.9rem;color:var(--muted)">/mo</span></div>
       <div style="color:var(--muted);font-size:0.72rem;margin-bottom:1rem">Unlock everything</div>
       <ul style="list-style:none;text-align:left;font-size:0.78rem;line-height:2">
-        <li>✅ 21-Factor Deep Scoring</li>
-        <li>✅ <strong>8</strong> Optimization Strategies</li>
-        <li>✅ <strong>Full</strong> Diagnostics</li>
-        <li>✅ Community Templates</li>
-        <li>✅ Batch Scoring 📊</li>
-        <li>✅ Score History 📜</li>
-        <li>✅ Export Reports (MD/JSON)</li>
-        <li>✅ AI Rewrite (OpenAI)</li>
-        <li>✅ Multi-Model (GPT/Claude/Gemini)</li>
+        <li>[V] 21-Factor Deep Scoring</li>
+        <li>[V] <strong>8</strong> Optimization Strategies</li>
+        <li>[V] <strong>Full</strong> Diagnostics</li>
+        <li>[V] Community Templates</li>
+        <li>[V] Batch Scoring [=]</li>
+        <li>[V] Score History [:]</li>
+        <li>[V] Export Reports (MD/JSON)</li>
+        <li>[V] AI Rewrite (OpenAI)</li>
+        <li>[V] Multi-Model (GPT/Claude/Gemini)</li>
       </ul>
       <button class="btn btn-primary" onclick="handleUpgrade()" style="width:100%;margin-top:0.6rem;padding:0.5rem;font-size:0.85rem">Upgrade to Pro →</button>
     </div>
@@ -439,7 +439,7 @@ Example: You are an expert Python developer with 10 years of experience. Write a
       <button class="btn btn-outline" onclick="clearAllKeys()">Clear Keys</button>
       <button class="btn btn-primary" onclick="closeSettings()">Done</button>
     </div>        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
-          <label style="color:var(--accent2);font-weight:700;margin-bottom:0.5rem;display:block">🔑 PromptForge Pro</label>
+          <label style="color:var(--accent2);font-weight:700;margin-bottom:0.5rem;display:block">(K) PromptForge Pro</label>
           <div id="pro-status" style="margin-bottom:0.5rem"></div>
           <div class="pro-input-group">
             <input type="text" id="pro-key-input" placeholder="Enter Pro activation key" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.7rem;border-radius:6px;font-size:0.8rem;flex:1">
@@ -457,7 +457,7 @@ Example: You are an expert Python developer with 10 years of experience. Write a
       <label>Paste Multiple Prompts</label>
       <textarea id="batch-input" placeholder="Paste multiple prompts separated by --- or blank lines..." style="min-height:180px"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="batchScorePrompts()">📊 Batch Score All</button>
+    <button class="btn btn-primary" onclick="batchScorePrompts()">[=] Batch Score All</button>
     <div id="batch-results" style="margin-top:1rem"></div>
   </div>
 </div>
@@ -504,7 +504,7 @@ PF.FREE_DIAG_LIMIT=5;
 
 PF.scoreV2=function(p){
 p=(p||"").trim();
-if(!p)return{score:0,tier:"Empty",tierColor:"#6b6b80",tierEmoji:"📭",tierCSS:"",factors:[],diagnostics:[],categoryBreakdown:{},taskType:"none",wordCount:0,sentenceCount:0,paragraphCount:0,avgSentenceLen:0,antiPatterns:[]};
+if(!p)return{score:0,tier:"Empty",tierColor:"#6b6b80",tierEmoji:"[ ]",tierCSS:"",factors:[],diagnostics:[],categoryBreakdown:{},taskType:"none",wordCount:0,sentenceCount:0,paragraphCount:0,avgSentenceLen:0,antiPatterns:[]};
 var w=p.split(/\s+/),wc=w.length;
 var s=p.split(/[.!?]+/).filter(function(x){return x.trim().length>0}),sc=s.length||1;
 var pg=p.split(/\n\n+/).filter(function(x){return x.trim().length>0}),pc=pg.length||1;
@@ -642,11 +642,11 @@ var cb={};for(var cat in cS){cb[cat]=Math.round(cS[cat]/cW[cat]);}
 
 // Tier classification
 var tier,tc,te,tcs;
-if(fin>=70){tier="Masterpiece";tc="#10b981";te="🏆";tcs="t-Excellent"}
-else if(fin>=55){tier="Professional";tc="#3b82f6";te="👍";tcs="t-Good"}
-else if(fin>=42){tier="Capable";tc="#f59e0b";te="🔧";tcs="t-Fair"}
-else if(fin>=25){tier="Developing";tc="#ef4444";te="🌱";tcs="t-Needs-Work"}
-else{tier="Getting Started";tc="#dc2626";te="🚀";tcs="t-Poor"}
+if(fin>=70){tier="Masterpiece";tc="#10b981";te="[T]";tcs="t-Excellent"}
+else if(fin>=55){tier="Professional";tc="#3b82f6";te="[+]";tcs="t-Good"}
+else if(fin>=42){tier="Capable";tc="#f59e0b";te="[~]";tcs="t-Fair"}
+else if(fin>=25){tier="Developing";tc="#ef4444";te="[~]";tcs="t-Needs-Work"}
+else{tier="Getting Started";tc="#dc2626";te="[>]";tcs="t-Poor"}
 
 // Build diagnostics
 var dg=[];
@@ -719,12 +719,12 @@ function analyzePromptV2(){
   var dlHTML="";
   for(var i=0;i<visibleDiag.length;i++){
     var d=result.diagnostics[i];
-    var emoji=d.severity==="critical"?"🔴":d.severity==="warning"?"🟡":"🔵";
+    var emoji=d.severity==="critical"?"(R)":d.severity==="warning"?"(Y)":"(B)";
     dlHTML+='<div class="diag-item '+d.severity+'"><div class="diag-sev">'+emoji+" "+d.severity+'</div><div class="diag-body"><strong>'+d.factor+'</strong> ('+d.cat+'): '+d.advice+'</div></div>';
   }
   dl.innerHTML=dlHTML;
   if(hiddenDiag.length>0&&!isPro){
-    dl.innerHTML+='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>🔓</span><div><strong>'+hiddenDiag.length+' more diagnostics hidden</strong><br><small>Upgrade to Pro for full analysis</small></div></div>';
+    dl.innerHTML+='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>(U)</span><div><strong>'+hiddenDiag.length+' more diagnostics hidden</strong><br><small>Upgrade to Pro for full analysis</small></div></div>';
   }
   showFactorsView();
   toast("Score: "+result.score+"% | "+result.tier);
@@ -871,8 +871,8 @@ function optimizePromptV2(){
   var ss=document.getElementById("opt-strategies");
   var stratHTML=appliedStrats.map(function(s){return '<span class="strat-chip applied" title="'+s.desc+'">'+s.name+'</span>';}).join("");
   if(remainingStrats.length>0&&!isPro){
-    stratHTML+=remainingStrats.map(function(s){return '<span class="strat-chip locked" title="Pro only: '+s.desc+'">🔒 '+s.name+'</span>';}).join("");
-    stratHTML+='<span class="pro-cta-inline" onclick="handleUpgrade()">🔓 Unlock all '+result.strategies.length+' strategies with Pro</span>';
+    stratHTML+=remainingStrats.map(function(s){return '<span class="strat-chip locked" title="Pro only: '+s.desc+'">(L) '+s.name+'</span>';}).join("");
+    stratHTML+='<span class="pro-cta-inline" onclick="handleUpgrade()">(U) Unlock all '+result.strategies.length+' strategies with Pro</span>';
   }
   ss.innerHTML=stratHTML;
 
@@ -932,7 +932,7 @@ function saveToHistory(prompt,result){
 }
 
 function renderHistory(){
-  if(!PF.isPro()){document.getElementById("history-list").innerHTML='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>🔓</span><div><strong>Score History is Pro only</strong><br><small>Track your prompts over time</small></div></div>';return}
+  if(!PF.isPro()){document.getElementById("history-list").innerHTML='<div class="pro-cta-banner" onclick="handleUpgrade()"><span>(U)</span><div><strong>Score History is Pro only</strong><br><small>Track your prompts over time</small></div></div>';return}
   var hist=JSON.parse(localStorage.getItem("pf_history")||"[]");
   var list=document.getElementById("history-list");
   if(hist.length===0){list.innerHTML='<div style="text-align:center;padding:1rem;color:var(--muted)">No history yet. Analyze prompts to build history.</div>';return}
@@ -1003,7 +1003,7 @@ function comparePrompts(){
   html+='</div>';
   var diff=rb.score-ra.score;
   html+='<div style="text-align:center;margin-top:0.8rem;font-weight:700;font-size:0.9rem">';
-  if(diff>5)html+='<span style="color:#10b981">Prompt B wins by +'+diff+'% 🏆</span>';
+  if(diff>5)html+='<span style="color:#10b981">Prompt B wins by +'+diff+'% [T]</span>';
   else if(diff<-5)html+='<span style="color:#ef4444">Prompt A wins by +'+Math.abs(diff)+'%</span>';
   else html+='<span style="color:#f59e0b">Too close to call (diff '+diff+'%)</span>';
   html+='</div>';
@@ -1043,11 +1043,11 @@ function hideLoading(elId){
 }
 function showError(elId,msg){
   var el=document.getElementById(elId);
-  if(el){el.style.display="block";el.innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--red);background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.2)"><strong>⚠️ Error</strong><p style="margin-top:0.3rem;color:var(--muted)">'+msg+'</p></div>'}
+  if(el){el.style.display="block";el.innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--red);background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.2)"><strong>[!] Error</strong><p style="margin-top:0.3rem;color:var(--muted)">'+msg+'</p></div>'}
 }
 function showEmpty(elId,msg){
   var el=document.getElementById(elId);
-  if(el){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)"><span style="font-size:2rem">📭</span><p style="margin-top:0.5rem">'+msg+'</p></div>'}
+  if(el){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)"><span style="font-size:2rem">[ ]</span><p style="margin-top:0.5rem">'+msg+'</p></div>'}
 }
 
 // Add CSS for spinner
@@ -1101,13 +1101,38 @@ function checkEmptyStates(){
 var _shownHint=localStorage.getItem("pf_hint_shown");
 if(!_shownHint){
   setTimeout(function(){
-    toast("💡 Tip: Press Ctrl+Enter to analyze, Ctrl+1-9 to switch tabs");
+    toast("(?) Tip: Press Ctrl+Enter to analyze, Ctrl+1-9 to switch tabs");
     localStorage.setItem("pf_hint_shown","true");
   },2000);
 }
 
 // Init drafts on page load
 setTimeout(restoreDrafts,500);
+
+
+var templates=[
+  {cat:'Code',title:'Code Review',prompt:'Review the following code for bugs, performance issues, and best practices violations. Provide specific line-by-line feedback.',uses:'2.4k',rating:'4.8'},
+  {cat:'Code',title:'API Generator',prompt:'Generate a REST API endpoint for [resource] with CRUD operations. Include input validation, error handling, and clear documentation.',uses:'1.8k',rating:'4.7'},
+  {cat:'Code',title:'Unit Test Writer',prompt:'Write comprehensive unit tests for the following function. Cover edge cases, error conditions, and happy path with clear assertions.',uses:'3.1k',rating:'4.9'},
+  {cat:'Code',title:'SQL Optimizer',prompt:'Analyze and optimize the following SQL query. Explain each optimization and provide the improved version with benchmarks.',uses:'1.2k',rating:'4.6'},
+  {cat:'Code',title:'Regex Builder',prompt:'Write a regex pattern that matches [description]. Explain each component of the pattern and provide test cases.',uses:'980',rating:'4.5'},
+  {cat:'Writing',title:'Blog Outline',prompt:'Create a detailed blog post outline about [topic]. Include compelling H1 title, introduction hook, 5-7 sections, and a conclusion with CTA.',uses:'4.2k',rating:'4.8'},
+  {cat:'Writing',title:'Email Composer',prompt:'Write a professional email about [subject]. Specify desired tone, include clear subject line, greeting, body with key points, and closing.',uses:'5.6k',rating:'4.5'},
+  {cat:'Writing',title:'Product Description',prompt:'Write a compelling product description for [product]. Highlight 3-5 key features, include social proof, and end with a strong CTA.',uses:'2.9k',rating:'4.7'},
+  {cat:'Writing',title:'Landing Page Copy',prompt:'Write landing page copy for [product/service]. Include hero headline, value propositions, features section, testimonials, and CTA.',uses:'1.7k',rating:'4.6'},
+  {cat:'Analysis',title:'SWOT Analysis',prompt:'Conduct a SWOT analysis for [company/product]. Analyze strengths, weaknesses, opportunities, and threats with specific examples.',uses:'1.5k',rating:'4.4'},
+  {cat:'Analysis',title:'Data Insights',prompt:'Analyze the following data and extract 5-7 key insights. Present findings with visual descriptions and actionable business recommendations.',uses:'980',rating:'4.6'},
+  {cat:'Analysis',title:'Competitor Analysis',prompt:'Analyze [competitor]. Compare their product, pricing, marketing, strengths and weaknesses. Identify gaps and opportunities.',uses:'720',rating:'4.3'},
+  {cat:'Creative',title:'Story Generator',prompt:'Write a [genre] story about [theme]. Include vivid sensory details, compelling characters, and an engaging plot. ~500 words.',uses:'3.3k',rating:'4.8'},
+  {cat:'Creative',title:'Brainstorming',prompt:'Generate 20 creative ideas for [topic]. Include unconventional approaches. Rate feasibility (1-5) and provide one-line descriptions.',uses:'2.1k',rating:'4.7'},
+  {cat:'Creative',title:'Name Generator',prompt:'Generate 30 name ideas for [product/brand/character]. Group by style (modern, classic, abstract). Explain the reasoning behind top picks.',uses:'1.4k',rating:'4.5'},
+  {cat:'Business',title:'Market Research',prompt:'Conduct market analysis for [industry]. Identify trends, major competitors, target demographics, and growth opportunities with data.',uses:'1.1k',rating:'4.5'},
+  {cat:'Business',title:'Pitch Deck Outline',prompt:'Create a pitch deck outline for [startup]. Include problem, solution, market size, business model, traction, team, and ask.',uses:'890',rating:'4.3'},
+  {cat:'Education',title:'Lesson Plan',prompt:'Create a lesson plan for [subject], targeting [level]. Include objectives, materials, activities (with timing), assessment, and homework.',uses:'1.6k',rating:'4.6'},
+  {cat:'Education',title:'Study Guide',prompt:'Create a study guide for [topic]. Include key concepts, definitions, formulas, practice questions with answers, and summary.',uses:'1.1k',rating:'4.4'},
+  {cat:'Education',title:'Explainer',prompt:'Explain [complex topic] to a [beginner/intermediate/advanced] audience. Use analogies, concrete examples, and avoid jargon without explanation.',uses:'2.3k',rating:'4.7'}
+];
+;
 
 
 // 8-dimension scoring engine
