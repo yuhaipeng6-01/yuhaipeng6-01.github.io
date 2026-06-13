@@ -96,7 +96,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
     <button class="btn btn-outline" onclick="switchTab('analyzer')">Analyzer</button>
     <button class="btn btn-outline" onclick="switchTab('templates')">Templates</button>
     <button class="btn btn-outline" onclick="openSettings()">⚙️ Settings</button>
-    <button class="btn btn-pro" onclick="handleUpgrade()">Upgrade $9/mo</button>
+    <button class="btn btn-pro" onclick="handleUpgrade()">Upgrade $5/mo</button>
   </div>
 </header>
 <main>
@@ -116,6 +116,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
   <button class="tab-btn active" onclick="switchTab('analyzer')" id="tab-analyzer">📊 Analyze</button>
   <button class="tab-btn" onclick="switchTab('optimizer')" id="tab-optimizer">✨ Optimize</button>
   <button class="tab-btn" onclick="switchTab('compare')" id="tab-compare">🔄 Compare</button>
+  <button class="tab-btn" onclick="switchTab('community')" id="tab-community">🌍 Community</button>
   <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">📚 Templates</button>
   <button class="tab-btn" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite <small style="color:var(--accent2)">PRO</small></button>
   <button class="tab-btn" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model <small style="color:var(--accent2)">PRO</small></button>
@@ -181,7 +182,40 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
   </div>
 </div>
 
-<!-- TAB 4: Templates -->
+
+<!-- TAB: Community -->
+<div class="tab-panel" id="panel-community">
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem">
+    <div class="card">
+      <h3 style="margin-bottom:0.75rem">🌍 Community Templates</h3>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem">Prompts shared by the community. Upvote the ones you like!</p>
+      <div class="filter-bar" id="comm-filter-bar"></div>
+      <div id="community-grid" style="display:grid;gap:0.5rem"></div>
+      <div id="community-loading" style="text-align:center;padding:2rem;color:var(--muted)">Loading community templates...</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:0.75rem">📤 Share Your Prompt</h3>
+      <div class="input-group"><input type="text" id="comm-title" placeholder="Template name..." style="font-size:0.9rem;font-weight:600"></div>
+      <div class="input-group">
+        <select id="comm-cat" style="font-size:0.85rem">
+          <option value="">Category</option>
+          <option value="Code">Code</option>
+          <option value="Writing">Writing</option>
+          <option value="Analysis">Analysis</option>
+          <option value="Creative">Creative</option>
+          <option value="Business">Business</option>
+          <option value="Education">Education</option>
+        </select>
+      </div>
+      <div class="input-group"><textarea id="comm-prompt" placeholder="Paste your best prompt here to share with the community..." style="min-height:120px;font-size:0.85rem"></textarea></div>
+      <button class="btn btn-primary" onclick="submitTemplate()" style="width:100%">📤 Submit to Community</button>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:0.5rem">Submitted via GitHub Issues. Your prompt will be public.</p>
+      <div id="comm-submit-status" style="margin-top:0.5rem;font-size:0.8rem"></div>
+    </div>
+  </div>
+</div>
+
+  <!-- TAB 4: Templates -->
 <div class="tab-panel" id="panel-templates">
   <div class="filter-bar" id="filter-bar"></div>
   <input type="text" id="template-search" placeholder="🔍 Search 50+ templates..." style="margin-bottom:0.8rem" oninput="renderTemplates()">
@@ -232,10 +266,10 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
 
 <!-- Upgrade CTA -->
 <div style="text-align:center;margin:2.5rem 0;padding:2rem;background:var(--card-bg);border:1px solid var(--border);border-radius:0.75rem">
-  <h3>🚀 PromptForge Pro — $9/month</h3>
+  <h3>🚀 PromptForge Pro — $5/month</h3>
   <p style="color:var(--muted);margin:0.5rem 0 1rem">AI-powered rewrite engine • Multi-model comparison • Unlimited optimizations</p>
   <button class="btn btn-pro" style="padding:0.7rem 2rem" onclick="handleUpgrade()">Upgrade to Pro →</button>
-  <p style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem">Secure payment via PayPal. 3 free uses included.</p>
+  <p style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem">Secure payment via PayPal. 5 free uses included.</p>
 </div>
 </main>
 
@@ -248,7 +282,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
     <div class="setting-row"><div><strong>OpenAI API Key</strong><p style="font-size:0.7rem;color:var(--muted)">For GPT-4o / GPT-4o Mini</p></div><div><span class="api-key-display" id="openai-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.65rem;padding:0.15rem 0.4rem;margin-top:0.2rem" onclick="setAPIKey('openai')">Set Key</button></div></div>
     <div class="setting-row"><div><strong>Anthropic API Key</strong><p style="font-size:0.7rem;color:var(--muted)">For Claude models</p></div><div><span class="api-key-display" id="anthropic-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.65rem;padding:0.15rem 0.4rem;margin-top:0.2rem" onclick="setAPIKey('anthropic')">Set Key</button></div></div>
     <div class="setting-row"><div><strong>Google API Key</strong><p style="font-size:0.7rem;color:var(--muted)">For Gemini models</p></div><div><span class="api-key-display" id="google-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.65rem;padding:0.15rem 0.4rem;margin-top:0.2rem" onclick="setAPIKey('google')">Set Key</button></div></div>
-    <div class="setting-row"><div><strong>Pro Status</strong></div><div><span id="pro-status-display" style="color:var(--red)">Free</span><br><button class="btn btn-pro" style="font-size:0.65rem;padding:0.2rem 0.5rem;margin-top:0.2rem" onclick="handleUpgrade()">Upgrade $9/mo</button></div></div>
+    <div class="setting-row"><div><strong>Pro Status</strong></div><div><span id="pro-status-display" style="color:var(--red)">Free</span><br><button class="btn btn-pro" style="font-size:0.65rem;padding:0.2rem 0.5rem;margin-top:0.2rem" onclick="handleUpgrade()">Upgrade $5/mo</button></div></div>
     <div style="margin-top:1rem;display:flex;gap:0.4rem;justify-content:flex-end">
       <button class="btn btn-outline" onclick="clearAllKeys()">Clear Keys</button>
       <button class="btn btn-primary" onclick="closeSettings()">Done</button>
@@ -447,19 +481,125 @@ async function runMultiModel(){
 }
 
 // Upgrade
-function handleUpgrade(){window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=330136479%40qq.com&item_name=PromptForge+Pro&amount=9.00&currency_code=USD&no_shipping=1','_blank');toast('Redirecting to PayPal ($9/mo)...')}
+function handleUpgrade(){window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=330136479%40qq.com&item_name=PromptForge+Pro&amount=5.00&currency_code=USD&no_shipping=1','_blank');toast('Redirecting to PayPal ($5/mo)...')}
 
 // Utils
 function copyToClipboard(t){navigator.clipboard.writeText(t).then(function(){toast('Copied!')}).catch(function(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copied!')})}
 
 function openSettings(){document.getElementById('settings-modal').style.display='flex';updateSettingsDisplay()}
 function closeSettings(){document.getElementById('settings-modal').style.display='none'}
+function setGitHubKey(){var k=prompt('Enter GitHub Personal Access Token (for submitting templates):');if(k){localStorage.setItem('pf_github_key',k);toast('GitHub token saved!')}}
 function setAPIKey(p){var k=prompt('Enter '+p.toUpperCase()+' API Key:');if(k){localStorage.setItem('pf_'+p+'_key',k);toast(p.toUpperCase()+' key saved!');updateSettingsDisplay()}}
 function clearAllKeys(){['openai','anthropic','google'].forEach(function(k){localStorage.removeItem('pf_'+k+'_key')});updateSettingsDisplay();toast('Keys cleared')}
-function updateSettingsDisplay(){var ok=localStorage.getItem('pf_openai_key');document.getElementById('openai-key-display').textContent=ok?'••••'+ok.slice(-4):'Not set';var ak=localStorage.getItem('pf_anthropic_key');document.getElementById('anthropic-key-display').textContent=ak?'••••'+ak.slice(-4):'Not set';var gk=localStorage.getItem('pf_google_key');document.getElementById('google-key-display').textContent=gk?'••••'+gk.slice(-4):'Not set'}
+function updateSettingsDisplay(){
+  var gh=localStorage.getItem('pf_github_key');document.getElementById('github-key-display').textContent=gh?'••••'+gh.slice(-4):'Not set';var ok=localStorage.getItem('pf_openai_key');document.getElementById('openai-key-display').textContent=ok?'••••'+ok.slice(-4):'Not set';var ak=localStorage.getItem('pf_anthropic_key');document.getElementById('anthropic-key-display').textContent=ak?'••••'+ak.slice(-4):'Not set';var gk=localStorage.getItem('pf_google_key');document.getElementById('google-key-display').textContent=gk?'••••'+gk.slice(-4):'Not set'}
 var rewriteModel='gpt-4o';
 function selectRewriteModel(m,b){rewriteModel=m;var chips=document.querySelectorAll('#panel-airewrite .model-chip');for(var i=0;i<chips.length;i++)chips[i].classList.remove('selected');b.classList.add('selected')}
 async function aiRewrite(){var p=document.getElementById('airewrite-input').value.trim();if(!p){toast('Enter a prompt');return}var key=localStorage.getItem('pf_openai_key');if(!key){toast('Set OpenAI Key in Settings');openSettings();return}document.getElementById('airewrite-results').style.display='none';document.getElementById('airewrite-loading').style.display='block';try{var resp=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:rewriteModel,messages:[{role:'system',content:'You are a prompt engineering expert. Rewrite user prompts to be maximally effective. Return ONLY the rewritten prompt.'},{role:'user',content:'Rewrite: '+p}],temperature:0.7,max_tokens:1000})});var d=await resp.json();document.getElementById('airewrite-loading').style.display='none';if(d.error){toast('API Error: '+d.error.message);return}var r=d.choices[0].message.content;document.getElementById('airewrite-results').style.display='block';document.getElementById('airewrite-orig').textContent=p;document.getElementById('airewrite-opt').textContent=r;toast('AI rewrite complete!')}catch(e){document.getElementById('airewrite-loading').style.display='none';toast('Error: '+e.message)}}
+
+
+// === COMMUNITY TEMPLATES ===
+var GH_TOKEN=function(){return localStorage.getItem('pf_github_key')||''};
+var COMM_REPO='yuhaipeng6-01/promptforge-templates';
+var commTemplates=[];
+var commFilter='All';
+var commCats=['All','Code','Writing','Analysis','Creative','Business','Education'];
+
+function renderCommFilters(){
+  var bar=document.getElementById('comm-filter-bar');
+  bar.innerHTML=commCats.map(function(c){return '<button class="filter-tag'+(c===commFilter?' active':'')+'" onclick="commFilter=\''+c+'\';renderCommFilters();renderCommunity()">'+c+'</button>'}).join('');
+}
+
+async function loadCommunity(){
+  document.getElementById('community-loading').style.display='block';
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+COMM_REPO+'/issues?state=open&per_page=50&sort=created&direction=desc');
+    var issues=await resp.json();
+    commTemplates=issues.map(function(iss){
+      return {
+        id:iss.number,
+        title:iss.title,
+        prompt:iss.body||'',
+        cat:iss.labels.length>0?iss.labels[0].name:'Other',
+        upvotes:iss.reactions?iss.reactions['+1']||0:0,
+        url:iss.html_url,
+        user:iss.user?iss.user.login:'anonymous',
+        created:iss.created_at
+      };
+    });
+  }catch(e){commTemplates=[]}
+  document.getElementById('community-loading').style.display='none';
+  renderCommFilters();
+  renderCommunity();
+}
+
+function renderCommunity(){
+  var f=commTemplates.filter(function(t){return commFilter==='All'||t.cat===commFilter});
+  var grid=document.getElementById('community-grid');
+  if(f.length===0){grid.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)">No community templates yet. Be the first!</div>';return}
+  grid.innerHTML=f.map(function(t){
+    var d=new Date(t.created).toLocaleDateString();
+    return '<div class="template-card" style="position:relative">'+
+      '<div style="display:flex;justify-content:space-between;align-items:start">'+
+        '<div><div class="template-cat">'+t.cat+'</div><div class="template-title">'+t.title+'</div></div>'+
+        '<button class="btn btn-outline" style="font-size:0.7rem;padding:0.15rem 0.5rem" onclick="upvoteTemplate('+t.id+',this)" title="Upvote">👍 <span>'+t.upvotes+'</span></button>'+
+      '</div>'+
+      '<div class="template-preview" style="margin-top:0.3rem">'+t.prompt.substring(0,120)+'...</div>'+
+      '<div style="display:flex;justify-content:space-between;margin-top:0.4rem;font-size:0.68rem;color:var(--muted)">'+
+        '<span>👤 '+t.user+'</span><span>📅 '+d+'</span>'+
+      '</div>'+
+      '<button class="btn btn-outline" style="margin-top:0.4rem;font-size:0.7rem;padding:0.15rem 0.5rem;width:100%" onclick="document.getElementById(\'analyzer-input\').value=\''+t.prompt.replace(/'/g,"\\'").replace(/\n/g,'\\n')+'\';switchTab(\'analyzer\');toast(\'Template loaded!\')">📋 Use This</button>'+
+    '</div>';
+  }).join('');
+}
+
+async function submitTemplate(){
+  var title=document.getElementById('comm-title').value.trim();
+  var cat=document.getElementById('comm-cat').value;
+  var prompt=document.getElementById('comm-prompt').value.trim();
+  var status=document.getElementById('comm-submit-status');
+  if(!title||!cat||!prompt){status.innerHTML='<span style="color:var(--red)">All fields required</span>';return}
+  status.innerHTML='<span style="color:var(--orange)">Submitting...</span>';
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+COMM_REPO+'/issues',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+localStorage.getItem('pf_github_key')||''+'','Accept':'application/vnd.github.v3+json','User-Agent':'PromptForge'},
+      body:JSON.stringify({title:title,body:prompt,labels:[cat]})
+    });
+    if(resp.ok){
+      status.innerHTML='<span style="color:var(--green)">✅ Submitted! Refresh to see it.</span>';
+      document.getElementById('comm-title').value='';
+      document.getElementById('comm-prompt').value='';
+      document.getElementById('comm-cat').value='';
+      setTimeout(loadCommunity,2000);
+    }else{
+      var e=await resp.json();
+      status.innerHTML='<span style="color:var(--red)">Error: '+e.message+'</span>';
+    }
+  }catch(e){status.innerHTML='<span style="color:var(--red)">Network error</span>'}
+}
+
+async function upvoteTemplate(issueNum,btn){
+  try{
+    await fetch('https://api.github.com/repos/'+COMM_REPO+'/issues/'+issueNum+'/reactions',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+localStorage.getItem('pf_github_key')||''+'','Accept':'application/vnd.github.v3+json','User-Agent':'PromptForge'},
+      body:JSON.stringify({content:'+1'})
+    });
+    var span=btn.querySelector('span');
+    span.textContent=(parseInt(span.textContent)||0)+1;
+    toast('Upvoted! 👍');
+  }catch(e){toast('Upvote requires GitHub login')}
+}
+
+// Extend switchTab to load community
+var origSwitchTab=switchTab;
+switchTab=function(tab){
+  origSwitchTab(tab);
+  if(tab==='community')loadCommunity();
+};
+
+loadCommunity();
 
 </script>
 </body>
