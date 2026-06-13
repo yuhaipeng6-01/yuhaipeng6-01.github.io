@@ -156,6 +156,13 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
 .pro-status{display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.6rem;border-radius:10px;font-size:0.72rem;font-weight:700}
 .pro-status.active{background:rgba(16,185,129,0.15);color:#10b981}
 .pro-status.inactive{background:rgba(107,107,128,0.1);color:var(--muted)}
+
+@media(max-width:768px){
+  .tabs-nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs-nav::-webkit-scrollbar{display:none}
+  .tab-btn{white-space:nowrap;flex-shrink:0;padding:0.5rem 0.8rem;font-size:0.75rem}
+  .compare-grid{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
@@ -980,6 +987,127 @@ analyzePromptV2=function(){
     saveToHistory(p,lastScoreResult);
   }
 };
+
+// ═══ COMPARE PROMPTS ═══════════════════════════════════
+function comparePrompts(){
+  var a=document.getElementById("compare-a").value.trim();
+  var b=document.getElementById("compare-b").value.trim();
+  if(!a||!b){toast("Enter both prompts to compare");return}
+  var ra=PF.scoreV2(a),rb=PF.scoreV2(b);
+  document.getElementById("compare-results").style.display="block";
+  var html='<div class="compare-grid" style="grid-template-columns:1fr 1fr;gap:1rem">';
+  var clsA=ra.score>=55?"#10b981":ra.score>=42?"#f59e0b":"#ef4444";
+  var clsB=rb.score>=55?"#10b981":rb.score>=42?"#f59e0b":"#ef4444";
+  html+='<div style="text-align:center;padding:0.8rem;background:var(--bg);border-radius:8px"><div style="font-size:2rem;font-weight:800;color:'+clsA+'">'+ra.score+'%</div><div style="font-size:0.8rem">'+ra.tier+'</div><div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem">'+ra.taskType+' · '+ra.wordCount+'w</div></div>';
+  html+='<div style="text-align:center;padding:0.8rem;background:var(--bg);border-radius:8px"><div style="font-size:2rem;font-weight:800;color:'+clsB+'">'+rb.score+'%</div><div style="font-size:0.8rem">'+rb.tier+'</div><div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem">'+rb.taskType+' · '+rb.wordCount+'w</div></div>';
+  html+='</div>';
+  var diff=rb.score-ra.score;
+  html+='<div style="text-align:center;margin-top:0.8rem;font-weight:700;font-size:0.9rem">';
+  if(diff>5)html+='<span style="color:#10b981">Prompt B wins by +'+diff+'% 🏆</span>';
+  else if(diff<-5)html+='<span style="color:#ef4444">Prompt A wins by +'+Math.abs(diff)+'%</span>';
+  else html+='<span style="color:#f59e0b">Too close to call (diff '+diff+'%)</span>';
+  html+='</div>';
+  // Category breakdown comparison
+  html+='<div style="margin-top:1rem"><h5 style="color:var(--muted);font-size:0.75rem;margin-bottom:0.5rem">Category Comparison</h5>';
+  var cats=["Foundation","Structure","Precision","Context","Robustness","Enhancement"];
+  cats.forEach(function(c){
+    var sa=ra.categoryBreakdown[c]||0,sb=rb.categoryBreakdown[c]||0;
+    var better=sb>sa?"B":sa>sb?"A":"tie";
+    var col=better==="B"?"#10b981":better==="A"?"#ef4444":"var(--muted)";
+    html+='<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;font-size:0.73rem">';
+    html+='<span style="width:80px;text-align:right;color:var(--muted)">'+c+'</span>';
+    html+='<span style="width:30px;text-align:right">'+sa+'%</span>';
+    html+='<div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;display:flex">';
+    html+='<div style="width:'+sa+'%;height:100%;background:var(--accent);min-width:2px"></div>';
+    html+='</div>';
+    html+='<div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;display:flex">';
+    html+='<div style="width:'+sb+'%;height:100%;background:'+col+';min-width:2px"></div>';
+    html+='</div>';
+    html+='<span style="width:30px;color:'+col+'">'+sb+'%</span>';
+    html+='</div>';
+  });
+  html+='<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.65rem;color:var(--muted);margin-top:0.3rem"><span style="width:80px"></span><span style="width:30px">A</span><span style="flex:1"></span><span style="flex:1"></span><span style="width:30px">B</span></div>';
+  html+='</div>';
+  document.getElementById("compare-results").innerHTML=html;
+  toast(ra.score+"% vs "+rb.score+"%");
+}
+
+// ═══ LOADING & ERROR HANDLING ═════════════════════════
+function showLoading(elId,msg){
+  var el=document.getElementById(elId);
+  if(el){el.style.display="block";el.innerHTML='<div style="text-align:center;padding:2rem"><div class="spin"></div><p style="margin-top:0.8rem;color:var(--muted)">'+msg+'</p></div>'}
+}
+function hideLoading(elId){
+  var el=document.getElementById(elId);
+  if(el)el.style.display="none";
+}
+function showError(elId,msg){
+  var el=document.getElementById(elId);
+  if(el){el.style.display="block";el.innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--red);background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.2)"><strong>⚠️ Error</strong><p style="margin-top:0.3rem;color:var(--muted)">'+msg+'</p></div>'}
+}
+function showEmpty(elId,msg){
+  var el=document.getElementById(elId);
+  if(el){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)"><span style="font-size:2rem">📭</span><p style="margin-top:0.5rem">'+msg+'</p></div>'}
+}
+
+// Add CSS for spinner
+var spinCSS=document.createElement("style");
+spinCSS.textContent=".spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto}@keyframes spin{to{transform:rotate(360deg)}}";
+document.head.appendChild(spinCSS);
+
+// ═══ KEYBOARD SHORTCUTS ═══════════════════════════════
+document.addEventListener("keydown",function(e){
+  if(e.ctrlKey&&e.key==="Enter"){
+    var activePanel=document.querySelector(".tab-panel.active");
+    if(!activePanel)return;
+    if(activePanel.id==="panel-analyzer")analyzePromptV2();
+    else if(activePanel.id==="panel-optimizer")optimizePromptV2();
+    else if(activePanel.id==="panel-batch")batchScorePrompts();
+  }
+  if(e.ctrlKey&&e.key>="1"&&e.key<="9"){
+    e.preventDefault();
+    var tabs=["analyzer","optimizer","compare","templates","community","batch","history","airewrite","multimodel"];
+    var idx=parseInt(e.key)-1;
+    if(idx<tabs.length)switchTab(tabs[idx]);
+  }
+});
+
+// ═══ DRAFT AUTO-SAVE ══════════════════════════════════
+var _autoSaveTimers={};
+function autoSave(id){
+  clearTimeout(_autoSaveTimers[id]);
+  _autoSaveTimers[id]=setTimeout(function(){
+    var el=document.getElementById(id);
+    if(el&&el.value.trim())localStorage.setItem("pf_draft_"+id,el.value);
+  },1000);
+}
+function restoreDrafts(){
+  ["analyzer-input","optimizer-input"].forEach(function(id){
+    var draft=localStorage.getItem("pf_draft_"+id);
+    var el=document.getElementById(id);
+    if(el&&draft&&!el.value)el.value=draft;
+    if(el)el.addEventListener("input",function(){autoSave(id)});
+  });
+}
+
+// ═══ EMPTY STATES ═════════════════════════════════════
+function checkEmptyStates(){
+  // Ensure all panels show something meaningful when empty
+  var bt=document.getElementById("batch-results");
+  if(bt&&!bt.innerHTML.trim())showEmpty("batch-results","Batch score results will appear here");
+}
+
+// ═══ ONBOARDING HINT ══════════════════════════════════
+var _shownHint=localStorage.getItem("pf_hint_shown");
+if(!_shownHint){
+  setTimeout(function(){
+    toast("💡 Tip: Press Ctrl+Enter to analyze, Ctrl+1-9 to switch tabs");
+    localStorage.setItem("pf_hint_shown","true");
+  },2000);
+}
+
+// Init drafts on page load
+setTimeout(restoreDrafts,500);
 
 
 // 8-dimension scoring engine
