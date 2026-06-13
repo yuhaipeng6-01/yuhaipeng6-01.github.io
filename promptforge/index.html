@@ -233,7 +233,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
       <button class="btn btn-primary" onclick="handleUpgrade()" style="width:100%;margin-top:0.6rem;padding:0.5rem;font-size:0.85rem">Upgrade to Pro -></button>
     </div>
   </div>
-  <p style="text-align:center;margin-top:0.8rem;font-size:0.7rem;color:var(--muted)">Already have a key[!] <span style="color:var(--accent2);cursor:pointer;text-decoration:underline" onclick="openSettings()">Activate in Settings</span></p>
+  <p style="text-align:center;margin-top:0.8rem;font-size:0.7rem;color:var(--muted)">Already have a key? <span style="color:var(--accent2);cursor:pointer;text-decoration:underline" onclick="openSettings()">Activate in Settings</span></p>
 </div>
 class="tabs-nav">
   <button class="tab-btn active" onclick="switchTab('analyzer')" id="tab-analyzer">📊 Analyze</button>
@@ -244,8 +244,8 @@ class="tabs-nav">
   <button class="tab-btn" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite <small style="color:var(--accent2)">PRO</small></button>
   <button class="tab-btn" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model <small style="color:var(--accent2)">PRO</small></button>
 
-  <button class="tab-btn" onclick="switchTab(&apos;batch&apos;)" id="tab-batch">[p] Batch <small style="color:var(--accent2)">PRO</small></button>
-  <button class="tab-btn" onclick="switchTab(&apos;history&apos;)" id="tab-history">[p] History <small style="color:var(--accent2)">PRO</small></button>
+  <button class="tab-btn" onclick="switchTab(&apos;batch&apos;)" id="tab-batch">?? Batch <small style="color:var(--accent2)">PRO</small></button>
+  <button class="tab-btn" onclick="switchTab(&apos;history&apos;)" id="tab-history">?? History <small style="color:var(--accent2)">PRO</small></button>
 </div>
 <!-- TAB 1: Analyzer -->
 <div class="tab-panel active" id="panel-analyzer">
@@ -1108,6 +1108,47 @@ if(!_shownHint){
 
 // Init drafts on page load
 setTimeout(restoreDrafts,500);
+
+// ═══ RUNTIME EMOJI CLEANUP ═════════════════════════════
+(function cleanupEmoji(){
+  // Replace all emoji in the entire document with ASCII-safe alternatives
+  var map=[
+    ["\u{1F52C}","[i]"],["\u26A0\uFE0F","[!]"],["\u26A0","[!]"],["\u2705","[V]"],["\u274C","[X]"],
+    ["\u{1F512}","[L]"],["\u{1F513}","[U]"],["\u{1F527}","[~]"],["\u{1F3C6}","[T]"],["\u{1F44D}","[+]"],
+    ["\u{1F4CA}","[=]"],["\u{1F4DC}","[:]"],["\u{1F389}","***"],["\u{1F511}","[K]"],["\u2728","[*]"],
+    ["\u{1F680}","[>]"],["\u{1F331}","[~]"],["\u{1F534}","[R]"],["\u{1F7E1}","[Y]"],["\u{1F535}","[B]"],
+    ["\u{1F4ED}","[ ]"],["\u{1F4A1}","[?]"],["\u{1F4DD}","[p]"],["\u{1F3AF}","[o]"],["\u{1F4CB}","[c]"],
+    ["\u{1F4C8}","[^]"],["\u{1F4C9}","[v]"],["\u{1F4AA}","[!]"],["\u{1F525}","[!]"],["\u2B50","[*]"],
+    ["\u{1F4CC}","[.]"],["\u{1F504}","[~]"],["\u{1F4E4}","[^]"],["\u{1F4E5}","[v]"],["\u{1F4BE}","[*]"],
+    ["\u231B","[.]"],["\u23F3","[.]"],["\u2795","[+]"],["\u{1F4DA}","[B]"],["\u{1F3A8}","[*]"],
+    ["\u26A1","[!]"],["\u{1F9E9}","[#]"],["\u{1F50D}","[?]"],["\u{1F3B5}","[*]"],["\u{1F4E2}","[!]"],
+    ["\u{1F9E0}","[*]"],["\u{1F3AE}","[*]"],["\u{1F4F1}","[*]"],["\u{1F310}","[@]"],["\u{1F4F7}","[*]"],
+    ["\u{1F3AC}","[*]"],["\u{1F50A}","[*]"],["\u{1F4AC}","[*]"],["\u{1F6E0}\uFE0F","[~]"],["\u{1F6E0}","[~]"],
+    ["\u{1F4E6}","[B]"],["\u{1F5C2}\uFE0F","[:]"],["\u{1F5C2}","[:]"],["\u{1F517}","[@]"],["\u{1F4CE}","[@]"],
+    ["\u{1F4C1}","[:]"],["\u{1F5C3}\uFE0F","[:]"],["\u{1F5C3}","[:]"],["\u{1F4C4}","[p]"],["\u{1F4C3}","[p]"],
+    ["\u{1F30D}","[@]"],["\u{1F916}","[R]"],["\u{1F504}","[~]"],
+    // HTML entities
+    ["&#x1F52C;","[i]"],["&#x2728;","[*]"],["&#x1F4CA;","[=]"],["&#x1F4DC;","[:]"],
+    ["&#x1F680;","[>]"],["&#x1F3C6;","[T]"],["&#x1F44D;","[+]"],["&#x1F527;","[~]"],
+    ["&#x26A0;&#xFE0F;","[!]"],["&#x26A0;","[!]"],["&#x2705;","[V]"],["&#x274C;","[X]"],
+    ["&#x1F512;","[L]"],["&#x1F513;","[U]"],["&#x1F4A1;","[?]"],["&#x1F511;","[K]"]
+  ];
+  
+  function cleanNode(node){
+    if(node.nodeType===3){ // Text node
+      var t=node.textContent;
+      var changed=false;
+      map.forEach(function(m){while(t.indexOf(m[0])!==-1){t=t.replace(m[0],m[1]);changed=true}});
+      if(changed)node.textContent=t;
+    }else if(node.nodeType===1&&node.nodeName!=="SCRIPT"&&node.nodeName!=="STYLE"){
+      for(var i=node.childNodes.length-1;i>=0;i--)cleanNode(node.childNodes[i]);
+    }
+  }
+  
+  // Run on DOM ready
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){cleanNode(document.body)});
+  else cleanNode(document.body);
+})();
 
 
 var templates=[
