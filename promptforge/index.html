@@ -182,7 +182,53 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
   </div>
 </div>
 
-<div class="tabs-nav">
+<div 
+<!-- Pricing Section -->
+<div style="margin:2rem 0 1.5rem">
+  <h3 style="text-align:center;margin-bottom:0.3rem">Choose Your Plan</h3>
+  <p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-bottom:1.2rem">Start free. Upgrade when you need more power.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:700px;margin:0 auto">
+    <!-- Free Card -->
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.2rem;text-align:center">
+      <div style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem">Free</div>
+      <div style="font-size:2rem;font-weight:800;margin-bottom:0.3rem">$0</div>
+      <div style="color:var(--muted);font-size:0.72rem;margin-bottom:1rem">Forever free</div>
+      <ul style="list-style:none;text-align:left;font-size:0.78rem;line-height:2">
+        <li>✅ 21-Factor Deep Scoring</li>
+        <li>✅ 3 Optimization Strategies</li>
+        <li>✅ Top 5 Diagnostics</li>
+        <li>✅ Community Templates</li>
+        <li>✅ Basic Diff View</li>
+        <li style="color:var(--muted)">❌ Batch Scoring</li>
+        <li style="color:var(--muted)">❌ Score History</li>
+        <li style="color:var(--muted)">❌ Export Reports</li>
+        <li style="color:var(--muted)">❌ AI Rewrite</li>
+        <li style="color:var(--muted)">❌ Multi-Model</li>
+      </ul>
+    </div>
+    <!-- Pro Card -->
+    <div style="background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(167,139,250,0.06));border:2px solid var(--accent);border-radius:12px;padding:1.2rem;text-align:center;position:relative">
+      <div style="position:absolute;top:-10px;right:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:0.2rem 0.8rem;border-radius:10px;font-size:0.65rem;font-weight:700">POPULAR</div>
+      <div style="font-size:0.8rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem">Pro</div>
+      <div style="font-size:2rem;font-weight:800;margin-bottom:0.3rem">$5<span style="font-size:0.9rem;color:var(--muted)">/mo</span></div>
+      <div style="color:var(--muted);font-size:0.72rem;margin-bottom:1rem">Unlock everything</div>
+      <ul style="list-style:none;text-align:left;font-size:0.78rem;line-height:2">
+        <li>✅ 21-Factor Deep Scoring</li>
+        <li>✅ <strong>8</strong> Optimization Strategies</li>
+        <li>✅ <strong>Full</strong> Diagnostics</li>
+        <li>✅ Community Templates</li>
+        <li>✅ Batch Scoring 📊</li>
+        <li>✅ Score History 📜</li>
+        <li>✅ Export Reports (MD/JSON)</li>
+        <li>✅ AI Rewrite (OpenAI)</li>
+        <li>✅ Multi-Model (GPT/Claude/Gemini)</li>
+      </ul>
+      <button class="btn btn-primary" onclick="handleUpgrade()" style="width:100%;margin-top:0.6rem;padding:0.5rem;font-size:0.85rem">Upgrade to Pro →</button>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:0.8rem;font-size:0.7rem;color:var(--muted)">Already have a key? <span style="color:var(--accent2);cursor:pointer;text-decoration:underline" onclick="openSettings()">Activate in Settings</span></p>
+</div>
+class="tabs-nav">
   <button class="tab-btn active" onclick="switchTab('analyzer')" id="tab-analyzer">📊 Analyze</button>
   <button class="tab-btn" onclick="switchTab('optimizer')" id="tab-optimizer">✨ Optimize</button>
   <button class="tab-btn" onclick="switchTab('compare')" id="tab-compare">🔄 Compare</button>
