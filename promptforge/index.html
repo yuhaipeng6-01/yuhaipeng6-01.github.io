@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -67,6 +67,32 @@ select{appearance:none;cursor:pointer}
 @keyframes slideIn{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
 footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid var(--border);margin-top:3rem;font-size:0.85rem}
 @media(max-width:768px){.hero h1{font-size:2rem}.compare-grid{grid-template-columns:1fr}}
+/* === Pro Features === */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal{background:var(--card-bg);border:1px solid var(--border);border-radius:1rem;padding:2rem;max-width:500px;width:90%}
+.modal h3{margin-bottom:1rem}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.toggle{width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;transition:background .3s}
+.toggle.on{background:var(--accent)}.toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .3s}
+.toggle.on::after{left:22px}
+.api-key-display{font-family:"JetBrains Mono",monospace;font-size:0.8rem;color:var(--green)}
+.model-selector{display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.5rem 0}
+.model-chip{padding:0.4rem 0.8rem;border-radius:1rem;font-size:0.8rem;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all .2s}
+.model-chip.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.multi-output{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0.75rem;margin:1rem 0}
+.model-output{background:var(--bg);border:1px solid var(--border);border-radius:0.5rem;padding:1rem}
+.model-output h5{font-size:0.85rem;margin-bottom:0.5rem;display:flex;justify-content:space-between}
+.model-output pre{font-size:0.78rem;white-space:pre-wrap;max-height:200px;overflow-y:auto;color:var(--text)}
+.output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+.model-badge{padding:0.15rem 0.5rem;border-radius:0.3rem;font-size:0.65rem;font-weight:600}
+.badge-gpt{background:rgba(16,185,129,0.2);color:var(--green)}
+.badge-claude{background:rgba(245,158,11,0.2);color:var(--orange)}
+.badge-gemini{background:rgba(59,130,246,0.2);color:#3b82f6}
+.rewrite-progress{text-align:center;padding:2rem}
+.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pro-only{opacity:0.5;pointer-events:none;filter:grayscale(0.5)}
 </style>
 </head>
 <body>
@@ -97,7 +123,10 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
     <button class="tab-btn" onclick="switchTab('optimizer')" id="tab-optimizer">✨ Optimize</button>
     <button class="tab-btn" onclick="switchTab('compare')" id="tab-compare">🔄 Compare</button>
     <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">📚 Templates</button>
-  </div>
+      <button class="tab-btn pro-only" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite</button>
+    <button class="tab-btn pro-only" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model</button>
+    <button class="tab-btn" onclick="openSettings()" id="tab-settings" style="margin-left:auto">⚙️ Settings</button>
+</div>
 
   <!-- TAB 1: Analyzer -->
   <div class="tab-panel active" id="panel-analyzer">
@@ -166,6 +195,58 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
     <input type="text" id="template-search" placeholder="🔍 Search 50+ prompt templates..." style="margin-bottom:1rem" oninput="renderTemplates()">
     <div class="template-grid" id="template-grid"></div>
     <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--muted)">💡 Click any template to load it into the Analyzer</p>
+  </div>
+
+    <!-- TAB 5: AI Rewrite (PRO) -->
+  <div class="tab-panel" id="panel-airewrite">
+    <div class="card" id="airewrite-card">
+      <div class="input-group">
+        <label>Your Prompt</label>
+        <textarea id="airewrite-input" placeholder="Enter a prompt you want AI to intelligently rewrite..."></textarea>
+      </div>
+      <div class="input-group">
+        <label>Select AI Model for Rewrite</label>
+        <div class="model-selector" id="rewrite-model-selector">
+          <button class="model-chip selected" data-model="gpt-4o" onclick="selectRewriteModel('gpt-4o',this)">GPT-4o</button>
+          <button class="model-chip" data-model="gpt-4o-mini" onclick="selectRewriteModel('gpt-4o-mini',this)">GPT-4o Mini</button>
+          <button class="model-chip" data-model="claude-3-sonnet" onclick="selectRewriteModel('claude-3-sonnet',this)">Claude 3 Sonnet</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="aiRewrite()" style="font-size:1rem;padding:0.7rem 2rem" id="btn-ai-rewrite">🤖 AI Rewrite</button>
+      <div id="airewrite-results" style="display:none;margin-top:1.5rem">
+        <div class="compare-grid">
+          <div class="compare-col"><div class="compare-label">📝 Original</div><div id="airewrite-orig" style="font-size:0.85rem;white-space:pre-wrap"></div></div>
+          <div class="compare-col"><div class="compare-label">🤖 AI Optimized</div><div id="airewrite-opt" style="font-size:0.85rem;white-space:pre-wrap"></div></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.5rem">
+          <button class="btn btn-primary" onclick="copyToClipboard(document.getElementById('airewrite-opt').textContent)">📋 Copy Result</button>
+          <button class="btn btn-outline" onclick="document.getElementById('analyzer-input').value=document.getElementById('airewrite-opt').textContent;switchTab('analyzer')">🔬 Analyze Result</button>
+        </div>
+      </div>
+      <div id="airewrite-loading" style="display:none" class="rewrite-progress"><div class="spin"></div><p style="margin-top:1rem;color:var(--muted)">AI is rewriting your prompt...</p></div>
+    </div>
+  </div>
+
+  <!-- TAB 6: Multi-Model (PRO) -->
+  <div class="tab-panel" id="panel-multimodel">
+    <div class="card" id="multimodel-card">
+      <div class="input-group">
+        <label>Prompt to Test Across Models</label>
+        <textarea id="multimodel-input" placeholder="Enter a prompt to run against multiple AI models simultaneously..."></textarea>
+      </div>
+      <div class="input-group">
+        <label>Select Models to Compare</label>
+        <div class="model-selector" id="multi-model-selector">
+          <button class="model-chip selected" data-model="gpt-4o" onclick="toggleMultiModel('gpt-4o',this)">GPT-4o</button>
+          <button class="model-chip selected" data-model="gpt-4o-mini" onclick="toggleMultiModel('gpt-4o-mini',this)">GPT-4o Mini</button>
+          <button class="model-chip selected" data-model="claude-3-sonnet" onclick="toggleMultiModel('claude-3-sonnet',this)">Claude 3 Sonnet</button>
+          <button class="model-chip" data-model="gemini-2.0-flash" onclick="toggleMultiModel('gemini-2.0-flash',this)">Gemini 2.0 Flash</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="runMultiModel()" style="font-size:1rem;padding:0.7rem 2rem" id="btn-multi-run">🔬 Run on All Models</button>
+      <div id="multimodel-loading" style="display:none" class="rewrite-progress"><div class="spin"></div><p style="margin-top:1rem;color:var(--muted)">Running against selected models...</p></div>
+      <div id="multimodel-results" style="display:none;margin-top:1.5rem"><div class="multi-output" id="multi-output-grid"></div></div>
+    </div>
   </div>
 
   <!-- Upgrade CTA -->
@@ -341,6 +422,158 @@ function copyToClipboard(t){
   });
 }
 renderTemplates();
+// === PRO SETTINGS ===
+var rewriteModel='gpt-4o';
+var multiModels=['gpt-4o','gpt-4o-mini','claude-3-sonnet'];
+
+function openSettings(){
+  document.getElementById('settings-modal').style.display='flex';
+  updateSettingsDisplay();
+}
+
+function closeSettings(){
+  document.getElementById('settings-modal').style.display='none';
+}
+
+function setAPIKey(provider){
+  var key=prompt('Enter your '+provider.toUpperCase()+' API Key:');
+  if(key){localStorage.setItem('pf_'+provider+'_key',key);toast(provider.toUpperCase()+' key saved!');updateSettingsDisplay()}
+}
+
+function clearAllKeys(){
+  ['openai','anthropic','google'].forEach(function(k){localStorage.removeItem('pf_'+k+'_key')});
+  updateSettingsDisplay();toast('All keys cleared');
+}
+
+function updateSettingsDisplay(){
+  var ok=localStorage.getItem('pf_openai_key');document.getElementById('openai-key-display').textContent=ok?'••••'+ok.slice(-4):'Not set';
+  var ak=localStorage.getItem('pf_anthropic_key');document.getElementById('anthropic-key-display').textContent=ak?'••••'+ak.slice(-4):'Not set';
+  var gk=localStorage.getItem('pf_google_key');document.getElementById('google-key-display').textContent=gk?'••••'+gk.slice(-4):'Not set';
+  document.getElementById('pro-status-display').textContent=isPro?'PRO':'Free';
+  document.getElementById('pro-status-display').style.color=isPro?'var(--green)':'var(--red)';
+  // Enable/disable Pro tabs
+  document.querySelectorAll('.pro-only').forEach(function(el){el.classList.toggle('pro-only',!isPro)});
+  if(isPro){document.getElementById('pro-badge').style.display='inline-block'}
+}
+
+function selectRewriteModel(model,btn){
+  rewriteModel=model;
+  document.querySelectorAll('#rewrite-model-selector .model-chip').forEach(function(b){b.classList.remove('selected')});
+  btn.classList.add('selected');
+}
+
+function toggleMultiModel(model,btn){
+  var i=multiModels.indexOf(model);
+  if(i>-1){multiModels.splice(i,1);btn.classList.remove('selected')}
+  else{multiModels.push(model);btn.classList.add('selected')}
+}
+
+// === AI REWRITE (PRO) ===
+async function aiRewrite(){
+  var prompt=document.getElementById('airewrite-input').value.trim();
+  if(!prompt){toast('Enter a prompt');return}
+  var key=localStorage.getItem('pf_openai_key');
+  if(!key){toast('Set OpenAI API Key in Settings first');openSettings();return}
+  document.getElementById('airewrite-loading').style.display='block';
+  document.getElementById('airewrite-results').style.display='none';
+  try{
+    var resp=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:rewriteModel,
+        messages:[
+          {role:'system',content:'You are a prompt engineering expert. Rewrite user prompts to be more effective. Add role definition if missing. Add output format specification. Add clear constraints. Make it specific and actionable. Return ONLY the rewritten prompt, no explanations.'},
+          {role:'user',content:'Rewrite this prompt to be more effective:\n\n'+prompt}
+        ],
+        temperature:0.7,max_tokens:1000
+      })
+    });
+    var data=await resp.json();
+    document.getElementById('airewrite-loading').style.display='none';
+    if(data.error){toast('API Error: '+data.error.message);return}
+    var rewritten=data.choices[0].message.content;
+    document.getElementById('airewrite-results').style.display='block';
+    document.getElementById('airewrite-orig').textContent=prompt;
+    document.getElementById('airewrite-opt').textContent=rewritten;
+    toast('AI rewrite complete!');
+  }catch(e){
+    document.getElementById('airewrite-loading').style.display='none';
+    toast('Error: '+e.message);
+  }
+}
+
+// === MULTI-MODEL (PRO) ===
+async function runMultiModel(){
+  var prompt=document.getElementById('multimodel-input').value.trim();
+  if(!prompt){toast('Enter a prompt');return}
+  if(multiModels.length===0){toast('Select at least one model');return}
+  var ok=localStorage.getItem('pf_openai_key');
+  if(!ok){toast('Set API keys in Settings first');openSettings();return}
+  document.getElementById('multimodel-loading').style.display='block';
+  document.getElementById('multimodel-results').style.display='none';
+  var grid=document.getElementById('multi-output-grid');grid.innerHTML='';
+  var promises=multiModels.map(function(model){
+    var key=model.includes('claude')?localStorage.getItem('pf_anthropic_key'):model.includes('gemini')?localStorage.getItem('pf_google_key'):ok;
+    if(!key)return Promise.resolve({model:model,error:'No API key set',content:''});
+    var url=model.includes('claude')?'https://api.anthropic.com/v1/messages':
+            model.includes('gemini')?'https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key:
+            'https://api.openai.com/v1/chat/completions';
+    var headers=model.includes('claude')?{'x-api-key':key,'anthropic-version':'2023-06-01','Content-Type':'application/json'}:
+                model.includes('gemini')?{'Content-Type':'application/json'}:
+                {'Content-Type':'application/json','Authorization':'Bearer '+key};
+    var body=model.includes('claude')?JSON.stringify({model:'claude-3-sonnet-20240229',max_tokens:500,messages:[{role:'user',content:prompt}]}):
+             model.includes('gemini')?JSON.stringify({contents:[{parts:[{text:prompt}]}]}):
+             JSON.stringify({model:model,messages:[{role:'user',content:prompt}],max_tokens:500});
+    return fetch(url,{method:'POST',headers:headers,body:body}).then(function(r){return r.json()}).then(function(d){
+      var content='';
+      if(model.includes('claude'))content=d.content?d.content[0].text:'Error';
+      else if(model.includes('gemini'))content=d.candidates?d.candidates[0].content.parts[0].text:'Error';
+      else content=d.choices?d.choices[0].message.content:'Error';
+      if(d.error)content='Error: '+d.error.message;
+      return {model:model,content:content,error:null};
+    }).catch(function(e){return {model:model,content:'',error:e.message}});
+  });
+  var results=await Promise.all(promises);
+  document.getElementById('multimodel-loading').style.display='none';
+  document.getElementById('multimodel-results').style.display='block';
+  var colors={};results.forEach(function(r,i){
+    var colors=['#3b82f6','#10b981','#f59e0b','#ec4899','#8b5cf6','#06b6d4'];
+    var color=colors[i%colors.length];
+    var badge=r.model.includes('claude')?'badge-claude':r.model.includes('gemini')?'badge-gemini':'badge-gpt';
+    var display=r.error?'<span style="color:var(--red)">⚠️ '+r.error+'</span>':
+      '<pre>'+r.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').substring(0,500)+'</pre>';
+    grid.innerHTML+='<div class="model-output"><h5 style="color:'+color+'">'+r.model+' <span class="model-badge '+badge+'">'+(r.error?'ERROR':'OK')+'</span></h5>'+display+'<button class="btn btn-outline" style="margin-top:0.5rem;font-size:0.7rem;padding:0.2rem 0.5rem" onclick="copyToClipboard(\''+r.content.replace(/'/g,"\\'").replace(/\n/g,'\\n').substring(0,300)+'\')">Copy</button></div>';
+  });
+  toast('Ran on '+results.length+' models');
+}
+
+updateSettingsDisplay();
 </script>
+<div class="modal-overlay" id="settings-modal" style="display:none" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <h3>⚙️ Settings</h3>
+    <div class="setting-row">
+      <div><strong>OpenAI API Key</strong><p style="font-size:0.75rem;color:var(--muted)">Used for GPT-4o and GPT-4o Mini</p></div>
+      <div style="text-align:right"><span class="api-key-display" id="openai-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.7rem;padding:0.2rem 0.5rem;margin-top:0.25rem" onclick="setAPIKey('openai')">Set Key</button></div>
+    </div>
+    <div class="setting-row">
+      <div><strong>Anthropic API Key</strong><p style="font-size:0.75rem;color:var(--muted)">Used for Claude models</p></div>
+      <div style="text-align:right"><span class="api-key-display" id="anthropic-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.7rem;padding:0.2rem 0.5rem;margin-top:0.25rem" onclick="setAPIKey('anthropic')">Set Key</button></div>
+    </div>
+    <div class="setting-row">
+      <div><strong>Google API Key</strong><p style="font-size:0.75rem;color:var(--muted)">Used for Gemini models</p></div>
+      <div style="text-align:right"><span class="api-key-display" id="google-key-display">Not set</span><br><button class="btn btn-outline" style="font-size:0.7rem;padding:0.2rem 0.5rem;margin-top:0.25rem" onclick="setAPIKey('google')">Set Key</button></div>
+    </div>
+    <div class="setting-row">
+      <div><strong>Pro Status</strong></div>
+      <div><span id="pro-status-display" style="color:var(--red)">Free</span><br><button class="btn btn-pro" style="font-size:0.7rem;padding:0.3rem 0.7rem;margin-top:0.25rem" onclick="handleUpgrade()">Upgrade $9/mo</button></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="clearAllKeys()">Clear All Keys</button>
+      <button class="btn btn-primary" onclick="closeSettings()">Done</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
