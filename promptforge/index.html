@@ -451,6 +451,16 @@ function handleUpgrade(){window.open('https://www.paypal.com/cgi-bin/webscr?cmd=
 
 // Utils
 function copyToClipboard(t){navigator.clipboard.writeText(t).then(function(){toast('Copied!')}).catch(function(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copied!')})}
+
+function openSettings(){document.getElementById('settings-modal').style.display='flex';updateSettingsDisplay()}
+function closeSettings(){document.getElementById('settings-modal').style.display='none'}
+function setAPIKey(p){var k=prompt('Enter '+p.toUpperCase()+' API Key:');if(k){localStorage.setItem('pf_'+p+'_key',k);toast(p.toUpperCase()+' key saved!');updateSettingsDisplay()}}
+function clearAllKeys(){['openai','anthropic','google'].forEach(function(k){localStorage.removeItem('pf_'+k+'_key')});updateSettingsDisplay();toast('Keys cleared')}
+function updateSettingsDisplay(){var ok=localStorage.getItem('pf_openai_key');document.getElementById('openai-key-display').textContent=ok?'••••'+ok.slice(-4):'Not set';var ak=localStorage.getItem('pf_anthropic_key');document.getElementById('anthropic-key-display').textContent=ak?'••••'+ak.slice(-4):'Not set';var gk=localStorage.getItem('pf_google_key');document.getElementById('google-key-display').textContent=gk?'••••'+gk.slice(-4):'Not set'}
+var rewriteModel='gpt-4o';
+function selectRewriteModel(m,b){rewriteModel=m;var chips=document.querySelectorAll('#panel-airewrite .model-chip');for(var i=0;i<chips.length;i++)chips[i].classList.remove('selected');b.classList.add('selected')}
+async function aiRewrite(){var p=document.getElementById('airewrite-input').value.trim();if(!p){toast('Enter a prompt');return}var key=localStorage.getItem('pf_openai_key');if(!key){toast('Set OpenAI Key in Settings');openSettings();return}document.getElementById('airewrite-results').style.display='none';document.getElementById('airewrite-loading').style.display='block';try{var resp=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:rewriteModel,messages:[{role:'system',content:'You are a prompt engineering expert. Rewrite user prompts to be maximally effective. Return ONLY the rewritten prompt.'},{role:'user',content:'Rewrite: '+p}],temperature:0.7,max_tokens:1000})});var d=await resp.json();document.getElementById('airewrite-loading').style.display='none';if(d.error){toast('API Error: '+d.error.message);return}var r=d.choices[0].message.content;document.getElementById('airewrite-results').style.display='block';document.getElementById('airewrite-orig').textContent=p;document.getElementById('airewrite-opt').textContent=r;toast('AI rewrite complete!')}catch(e){document.getElementById('airewrite-loading').style.display='none';toast('Error: '+e.message)}}
+
 </script>
 </body>
 </html>
