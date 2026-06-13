@@ -226,10 +226,15 @@ function generateLorem(){
   var paras=parseInt($('#lorem-paras').value)||3;
   var words=['lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','ut','enim','ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi','ut','aliquip','ex','ea','commodo','consequat','duis','aute','irure','dolor','in','reprehenderit','in','voluptate','velit','esse','cillum','dolore','eu','fugiat','nulla','pariatur','excepteur','sint','occaecat','cupidatat','non','proident','sunt','in','culpa','qui','officia','deserunt','mollit','anim','id','est','laborum'];
   var result=[];
-  for(var p=0;p<paras;p++){var para=[];var len=30+Math.floor(Math.random()*40);for(var i=0;i<len;i++){var w=words[Math.floor(Math.random()*words.length)];if(i===0)w=w.charAt(0).toUpperCase()+w.slice(1);para.push(w)}result.push(para.join(' ')+'.')}
-  $('#lorem-output').textContent=result.join('\n\n')
+  for(var i=0;i<paras;i++){var p=[];var len=20+Math.floor(Math.random()*30);for(var j=0;j<len;j++){p.push(words[Math.floor(Math.random()*words.length)])}result.push('<p>'+p.join(' ')+'.</p>')}
+  $('#lorem-output').innerHTML=result.join('\n');toast('Generated '+paras+' paragraph(s)!')
 }
-
+// ---- PayPal Upgrade ----
+function handleUpgrade(){
+  var paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=330136479%40qq.com&item_name=DevToolbox+Pro+Subscription&amount=9.00&currency_code=USD&no_shipping=1';
+  window.open(paypalUrl,'_blank');
+  toast('Redirecting to PayPal checkout...');
+}
 // ---- Color Converter ----
 function convertColor(){
   var v=$('#color-input').value.trim();
@@ -301,12 +306,7 @@ function escapeHTML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').repla
 
 // ---- Upgrade flow ----
 function showUpgradePrompt(){toast('🔒 Upgrade to Pro to use this tool');showPricing()}
-function handleUpgrade(){
-  // PAYPAL: Replace YOUR_USERNAME below with your PayPal.Me username after approval
-  var paypalLink = 'https://paypal.me/YOUR_USERNAME/9';
-  window.open(paypalLink,'_blank');
-  toast('Redirecting to PayPal checkout...');
-}
+
 function showPricing(){document.getElementById('pricing').scrollIntoView({behavior:'smooth'})}
 
 // ---- Render tools ----
