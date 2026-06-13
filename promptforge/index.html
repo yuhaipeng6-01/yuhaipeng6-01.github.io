@@ -92,7 +92,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
 .rewrite-progress{text-align:center;padding:2rem}
 .spin{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.pro-only{opacity:0.5;pointer-events:none;filter:grayscale(0.5)}
+.pro-locked{opacity:0.5;filter:grayscale(0.5)}
 </style>
 </head>
 <body>
@@ -123,8 +123,8 @@ footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid va
     <button class="tab-btn" onclick="switchTab('optimizer')" id="tab-optimizer">✨ Optimize</button>
     <button class="tab-btn" onclick="switchTab('compare')" id="tab-compare">🔄 Compare</button>
     <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">📚 Templates</button>
-      <button class="tab-btn pro-only" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite</button>
-    <button class="tab-btn pro-only" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model</button>
+      <button class="tab-btn pro-locked" onclick="switchTab('airewrite')" id="tab-airewrite">🤖 AI Rewrite</button>
+    <button class="tab-btn pro-locked" onclick="switchTab('multimodel')" id="tab-multimodel">🔬 Multi-Model</button>
     <button class="tab-btn" onclick="openSettings()" id="tab-settings" style="margin-left:auto">⚙️ Settings</button>
 </div>
 
